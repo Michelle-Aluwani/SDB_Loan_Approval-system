@@ -1,0 +1,362 @@
+<div class="admin-layout">
+
+  <!-- ================================= -->
+  <!-- SIDEBAR -->
+  <!-- ================================= -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+      <div class="brand-mark">
+        S
+      </div>
+
+      <div>
+        <h2>Loan Management</h2>
+        <span>Employee Portal</span>
+      </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+      <a
+        routerLink="/admin"
+        class="nav-item">
+
+        <span class="nav-icon">▦</span>
+
+        Dashboard
+
+      </a>
+
+
+      <a
+        routerLink="/admin/applications"
+        class="nav-item active">
+
+        <span class="nav-icon">▤</span>
+
+        Loan Applications
+
+      </a>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- ================================= -->
+  <!-- MAIN -->
+  <!-- ================================= -->
+
+  <main class="main-content">
+
+    <header class="topbar">
+
+      <div>
+
+        <span class="page-label">
+          EMPLOYEE PORTAL
+        </span>
+
+        <h1>
+          My Loan Applications
+        </h1>
+
+      </div>
+
+
+      <div class="account-area">
+
+        <button
+          type="button"
+          class="account-button"
+          (click)="toggleAccountMenu()">
+
+          <span class="employee-avatar">
+            {{ adminName.charAt(0) }}
+          </span>
+
+        </button>
+
+
+        @if (showAccountMenu) {
+
+          <div class="account-menu">
+
+            <div class="account-info">
+
+              <strong>
+                {{ adminName }}
+              </strong>
+
+              <span>
+                Loan Administrator
+              </span>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="menu-logout"
+              (click)="logout()">
+
+              Logout
+
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+    </header>
+
+
+    <!-- ================================= -->
+    <!-- PAGE INTRO -->
+    <!-- ================================= -->
+
+    <section class="page-intro">
+
+      <div>
+
+        <h2>
+          Applications you've handled
+        </h2>
+
+        <p>
+          View the loan applications you have
+          previously approved or rejected.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================= -->
+    <!-- SUMMARY -->
+    <!-- ================================= -->
+
+    <section class="summary-grid">
+
+      <div class="summary-card">
+
+        <span>
+          TOTAL HANDLED
+        </span>
+
+        <strong>
+          {{ applications.length }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <span>
+          APPROVED
+        </span>
+
+        <strong>
+          {{ approvedCount }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <span>
+          REJECTED
+        </span>
+
+        <strong>
+          {{ rejectedCount }}
+        </strong>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================================= -->
+    <!-- HISTORY -->
+    <!-- ================================= -->
+
+    <section class="applications-section">
+
+      <div class="section-heading">
+
+        <div>
+
+          <h2>
+            Application History
+          </h2>
+
+          <p>
+            Only applications handled by your
+            employee account are shown here.
+          </p>
+
+        </div>
+
+
+        <div class="filters">
+
+          <button
+            type="button"
+            [class.active]="selectedFilter === 'ALL'"
+            (click)="setFilter('ALL')">
+
+            All
+
+          </button>
+
+
+          <button
+            type="button"
+            [class.active]="selectedFilter === 'APPROVED'"
+            (click)="setFilter('APPROVED')">
+
+            Approved
+
+          </button>
+
+
+          <button
+            type="button"
+            [class.active]="selectedFilter === 'REJECTED'"
+            (click)="setFilter('REJECTED')">
+
+            Rejected
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      @if (filteredApplications.length > 0) {
+
+        <div class="table-container">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Application</th>
+                <th>Customer</th>
+                <th>Loan Type</th>
+                <th>Amount</th>
+                <th>Submitted</th>
+                <th>Decision Date</th>
+                <th>Decision</th>
+                <th></th>
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                application of filteredApplications;
+                track application.id
+              ) {
+
+                <tr>
+
+                  <td class="application-id">
+                    #{{ application.id }}
+                  </td>
+
+                  <td>
+                    {{ application.customer }}
+                  </td>
+
+                  <td>
+                    {{ application.loanType }}
+                  </td>
+
+                  <td class="amount">
+                    R{{ application.amount | number }}
+                  </td>
+
+                  <td>
+                    {{ application.submittedDate }}
+                  </td>
+
+                  <td>
+                    {{ application.reviewedDate }}
+                  </td>
+
+                  <td>
+
+                    <span
+                      class="status"
+                      [class.approved]="application.status === 'APPROVED'"
+                      [class.rejected]="application.status === 'REJECTED'">
+
+                      {{ application.status }}
+
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    <button
+                      type="button"
+                      class="view-button"
+                      (click)="viewApplication(application.id)">
+
+                      View
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+      @else {
+
+        <div class="empty-state">
+
+          <h3>
+            No applications found
+          </h3>
+
+          <p>
+            You have no applications matching
+            this filter.
+          </p>
+
+        </div>
+
+      }
+
+    </section>
+
+  </main>
+
+</div>

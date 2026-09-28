@@ -1,0 +1,393 @@
+<div class="min-h-screen bg-white">
+
+  <!-- NAVIGATION -->
+  <header class="bg-[#0033A1] text-white shadow">
+
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-8 py-5">
+
+      <!-- BRAND -->
+      <a routerLink="/" class="flex items-center gap-3">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-white
+                 font-bold text-[#0033A1]">
+          LA
+        </div>
+
+        <div>
+          <p class="text-lg font-bold leading-tight">
+            Loan Approval
+          </p>
+          <p class="text-xs text-blue-200">
+            Simple. Secure. Transparent.
+          </p>
+        </div>
+      </a>
+
+
+      <!-- MENU -->
+<nav class="flex items-center gap-8 text-sm font-semibold">
+
+  <!-- EXPLORE LOANS DROPDOWN -->
+  <div class="group relative">
+
+    <button
+      type="button"
+      class="flex items-center gap-2 py-3 transition hover:text-blue-200">
+      Explore Loans
+
+      <span class="text-xs transition group-hover:rotate-180">
+        ▼
+      </span>
+    </button>
+
+    <!-- DROPDOWN -->
+    <div
+      class="invisible absolute left-0 top-full z-50 w-64
+             translate-y-2 rounded-lg bg-white py-2 text-gray-800
+             opacity-0 shadow-xl transition-all duration-200
+             group-hover:visible group-hover:translate-y-0
+             group-hover:opacity-100">
+
+      <a
+        routerLink="/login"
+        [queryParams]="{ returnUrl: '/apply/personal' }"
+        class="block px-5 py-3 hover:bg-blue-50 hover:text-[#0033A1]">
+        Personal Loan
+      </a>
+
+      <a
+        routerLink="/login"
+        [queryParams]="{ returnUrl: '/apply/student' }"
+        class="block px-5 py-3 hover:bg-blue-50 hover:text-[#0033A1]">
+        Student Loan
+      </a>
+
+      <a
+        routerLink="/login"
+        [queryParams]="{ returnUrl: '/apply/vehicle' }"
+        class="block px-5 py-3 hover:bg-blue-50 hover:text-[#0033A1]">
+        Vehicle Finance
+      </a>
+
+      <a
+        routerLink="/login"
+        [queryParams]="{ returnUrl: '/apply/home' }"
+        class="block px-5 py-3 hover:bg-blue-50 hover:text-[#0033A1]">
+        Home Loan
+      </a>
+
+      <a
+        routerLink="/login"
+        [queryParams]="{ returnUrl: '/apply/debt-consolidation' }"
+        class="block px-5 py-3 hover:bg-blue-50 hover:text-[#0033A1]">
+        Debt Consolidation
+      </a>
+
+      <a
+        routerLink="/login"
+        [queryParams]="{ returnUrl: '/apply/revolving-credit' }"
+        class="block px-5 py-3 hover:bg-blue-50 hover:text-[#0033A1]">
+        Revolving Credit
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <a
+    href="#about"
+    class="transition hover:text-blue-200">
+    About
+  </a>
+
+
+  <a
+    routerLink="/login"
+    class="rounded border border-white px-5 py-2
+           transition hover:bg-white hover:text-[#0033A1]">
+    Login
+  </a>
+
+</nav>
+
+    </div>
+
+  </header>
+
+
+  <!-- HERO -->
+  <main>
+
+    <section
+      class="bg-gradient-to-br from-[#0033A1] to-[#001f62] text-white">
+
+      <div
+        class="mx-auto grid max-w-7xl items-center gap-14 px-8 py-20
+               lg:grid-cols-2">
+
+        <!-- HERO TEXT -->
+        <div>
+
+          <p
+            class="mb-4 text-sm font-semibold uppercase
+                   tracking-[0.2em] text-blue-200">
+            Finance made simpler
+          </p>
+
+          <h1 class="max-w-xl text-5xl font-bold leading-tight">
+            Helping you move forward with confidence.
+          </h1>
+
+          <p class="mt-6 max-w-xl text-lg leading-8 text-blue-100">
+            Explore loan options designed around different financial
+            needs. Check whether you may qualify before starting your
+            application.
+          </p>
+
+          <a
+            routerLink="/loans"
+            class="mt-8 inline-block rounded bg-white px-7 py-3
+                   font-bold text-[#0033A1] transition hover:bg-gray-100">
+            Explore all loans
+          </a>
+
+        </div>
+
+
+        <!-- RIGHT SIDE INFORMATION -->
+        <div
+          class="rounded-xl border border-white/20 bg-white/10 p-8
+                 backdrop-blur-sm">
+
+          <p class="text-sm font-semibold uppercase tracking-widest text-blue-200">
+            Why apply online?
+          </p>
+
+          <h2 class="mt-3 text-3xl font-bold">
+            Your application, in one place.
+          </h2>
+
+          <div class="mt-8 space-y-6">
+
+            <div>
+              <h3 class="font-bold">
+                Check your eligibility
+              </h3>
+              <p class="mt-1 text-sm leading-6 text-blue-100">
+                Answer a few questions to see whether you meet the
+                basic requirements for your selected loan.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="font-bold">
+                Apply online
+              </h3>
+              <p class="mt-1 text-sm leading-6 text-blue-100">
+                Complete your application and provide the required
+                information from one place.
+              </p>
+            </div>
+
+            <div>
+              <h3 class="font-bold">
+                Track your application
+              </h3>
+              <p class="mt-1 text-sm leading-6 text-blue-100">
+                Sign in to follow the progress of your application
+                as it moves through the review process.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- THREE FEATURED LOANS -->
+    <section class="bg-gray-50 py-20">
+
+      <div class="mx-auto max-w-7xl px-8">
+
+        <div class="mb-12">
+
+          <p
+            class="text-sm font-bold uppercase tracking-[0.2em]
+                   text-[#0033A1]">
+            Featured loans
+          </p>
+
+          <h2 class="mt-3 text-4xl font-bold text-gray-900">
+            What can we help you with?
+          </h2>
+
+          <p class="mt-4 max-w-2xl leading-7 text-gray-600">
+            Explore some of our loan options and check the basic
+            requirements before beginning an application.
+          </p>
+
+        </div>
+
+
+        <div class="grid gap-8 md:grid-cols-3">
+
+          <!-- PERSONAL LOAN -->
+          <article
+            class="flex flex-col rounded-xl bg-white p-8 shadow-sm
+                   transition hover:-translate-y-1 hover:shadow-lg">
+
+            <div
+              class="mb-6 flex h-12 w-12 items-center justify-center
+                     rounded-full bg-blue-50 font-bold text-[#0033A1]">
+              P
+            </div>
+
+            <p
+              class="text-xs font-bold uppercase tracking-widest
+                     text-[#0033A1]">
+              Personal
+            </p>
+
+            <h3 class="mt-2 text-2xl font-bold text-gray-900">
+              Personal Loan
+            </h3>
+
+            <p class="mt-4 flex-grow leading-7 text-gray-600">
+              Flexible financing for personal expenses, planned
+              purchases and other financial needs.
+            </p>
+
+            <a
+              [routerLink]="['/login']"
+              [queryParams]="{ returnUrl: '/qualify/personal' }"
+              class="mt-8 block rounded bg-[#0033A1] px-5 py-3
+                     text-center font-bold text-white
+                     transition hover:bg-blue-800">
+              Do I qualify?
+            </a>
+
+          </article>
+
+
+          <!-- STUDENT LOAN -->
+          <article
+            class="flex flex-col rounded-xl bg-white p-8 shadow-sm
+                   transition hover:-translate-y-1 hover:shadow-lg">
+
+            <div
+              class="mb-6 flex h-12 w-12 items-center justify-center
+                     rounded-full bg-blue-50 font-bold text-[#0033A1]">
+              S
+            </div>
+
+            <p
+              class="text-xs font-bold uppercase tracking-widest
+                     text-[#0033A1]">
+              Education
+            </p>
+
+            <h3 class="mt-2 text-2xl font-bold text-gray-900">
+              Student Loan
+            </h3>
+
+            <p class="mt-4 flex-grow leading-7 text-gray-600">
+              Financial support towards your studies with an
+              employed guarantor supporting the application.
+            </p>
+
+            <a
+              [routerLink]="['/login']"
+              [queryParams]="{ returnUrl: '/qualify/student' }"
+              class="mt-8 block rounded bg-[#0033A1] px-5 py-3
+                     text-center font-bold text-white
+                     transition hover:bg-blue-800">
+              Do I qualify?
+            </a>
+
+          </article>
+
+
+          <!-- VEHICLE FINANCE -->
+          <article
+            class="flex flex-col rounded-xl bg-white p-8 shadow-sm
+                   transition hover:-translate-y-1 hover:shadow-lg">
+
+            <div
+              class="mb-6 flex h-12 w-12 items-center justify-center
+                     rounded-full bg-blue-50 font-bold text-[#0033A1]">
+              V
+            </div>
+
+            <p
+              class="text-xs font-bold uppercase tracking-widest
+                     text-[#0033A1]">
+              Vehicle
+            </p>
+
+            <h3 class="mt-2 text-2xl font-bold text-gray-900">
+              Vehicle Finance
+            </h3>
+
+            <p class="mt-4 flex-grow leading-7 text-gray-600">
+              Financing designed to help you purchase your next
+              vehicle with flexible repayment options.
+            </p>
+
+            <a
+              [routerLink]="['/login']"
+              [queryParams]="{ returnUrl: '/qualify/vehicle' }"
+              class="mt-8 block rounded bg-[#0033A1] px-5 py-3
+                     text-center font-bold text-white
+                     transition hover:bg-blue-800">
+              Do I qualify?
+            </a>
+
+          </article>
+
+        </div>
+
+
+        <div class="mt-12 text-center">
+
+          <a
+            routerLink="/loans"
+            class="inline-block rounded border-2 border-[#0033A1]
+                   px-7 py-3 font-bold text-[#0033A1]
+                   transition hover:bg-[#0033A1] hover:text-white">
+            Explore all loans
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+    <section id="about" class="bg-white py-16">
+
+      <div class="mx-auto max-w-7xl px-8">
+
+        <h2 class="text-3xl font-bold text-gray-900">
+          A simpler way to apply
+        </h2>
+
+        <p class="mt-4 max-w-3xl leading-7 text-gray-600">
+          Our Loan Approval System allows customers to explore
+          available loan products, check basic eligibility, submit
+          applications and follow their progress online.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

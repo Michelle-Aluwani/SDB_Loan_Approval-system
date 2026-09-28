@@ -1,0 +1,70 @@
+<div class="login-page">
+
+  <header class="login-header">
+    <a routerLink="/" class="brand">
+      Loan Approval
+    </a>
+
+    <a routerLink="/" class="back-link">
+      ← Back to home
+    </a>
+  </header>
+
+  <main class="login-content">
+
+    <div class="login-card">
+
+      <p class="eyebrow">Secure access</p>
+
+      <h1>Welcome back</h1>
+
+      <p class="login-description">
+        Sign in to manage your loan applications.
+      </p>
+
+      <form (ngSubmit)="login()">
+
+        <label for="email">Email address</label>
+
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="Enter your email"
+          required
+        >
+
+        <label for="password">Password</label>
+
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Enter your password"
+          required
+        >
+
+        <a href="#" class="forgot-password">
+          Forgot password?
+        </a>
+
+        <button type="submit">
+          Sign in
+        </button>
+
+      </form>
+
+      <div class="divider"></div>
+
+      <p class="register-text">
+        Don't have an account?
+        <a href="#">Create account</a>
+      </p>
+
+    </div>
+
+  </main>
+
+</div>

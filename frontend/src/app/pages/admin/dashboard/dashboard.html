@@ -1,0 +1,383 @@
+<div class="admin-layout">
+
+
+  <!-- ========================================= -->
+  <!-- SIDEBAR -->
+  <!-- ========================================= -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+      <div class="brand-mark">
+        S
+      </div>
+
+      <div>
+
+        <h2>
+          Loan Management
+        </h2>
+
+        <span>
+          Employee Portal
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+      <a
+        routerLink="/admin"
+        class="nav-item active">
+
+        <span class="nav-icon">
+          ▦
+        </span>
+
+        Dashboard
+
+      </a>
+
+
+      <a
+        routerLink="/admin/applications"
+        class="nav-item">
+
+        <span class="nav-icon">
+          ▤
+        </span>
+
+        Loan Applications
+
+      </a>
+
+    </nav>
+
+  </aside>
+
+
+
+  <!-- ========================================= -->
+  <!-- MAIN CONTENT -->
+  <!-- ========================================= -->
+
+  <main class="main-content">
+
+
+    <!-- ========================================= -->
+    <!-- TOP BAR -->
+    <!-- ========================================= -->
+
+    <header class="topbar">
+
+      <div>
+
+        <span class="page-label">
+          EMPLOYEE PORTAL
+        </span>
+
+        <h1>
+          Dashboard
+        </h1>
+
+      </div>
+
+
+
+      <!-- EMPLOYEE ACCOUNT -->
+
+      <div class="account-area">
+
+        <button
+          type="button"
+          class="account-button"
+          (click)="toggleAccountMenu()">
+
+          <span class="employee-avatar">
+            {{ adminName.charAt(0) }}
+          </span>
+
+        </button>
+
+
+        @if (showAccountMenu) {
+
+          <div class="account-menu">
+
+            <div class="account-info">
+
+              <strong>
+                {{ adminName }}
+              </strong>
+
+              <span>
+                Loan Administrator
+              </span>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="menu-logout"
+              (click)="logout()">
+
+              Logout
+
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+    </header>
+
+
+
+    <!-- ========================================= -->
+    <!-- WELCOME -->
+    <!-- ========================================= -->
+
+    <section class="welcome-section">
+
+      <h2>
+        Welcome back, {{ adminName }}
+      </h2>
+
+      <p>
+        Review loan applications that are ready
+        for assessment.
+      </p>
+
+    </section>
+
+
+
+    <!-- ========================================= -->
+    <!-- QUEUE SUMMARY -->
+    <!-- ========================================= -->
+
+    <section class="queue-summary">
+
+      <div class="queue-card">
+
+        <div>
+
+          <span class="queue-label">
+            APPLICATIONS WAITING
+          </span>
+
+          <strong>
+            {{ pendingApplications }}
+          </strong>
+
+          <p>
+            Applications currently available
+            for review.
+          </p>
+
+        </div>
+
+
+        <a
+          routerLink="/admin/applications"
+          class="open-queue-button">
+
+          Open application queue
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ========================================= -->
+    <!-- APPLICATIONS READY FOR REVIEW -->
+    <!-- ========================================= -->
+
+    <section class="applications-section">
+
+      <div class="section-heading">
+
+        <div>
+
+          <h2>
+            Applications ready for review
+          </h2>
+
+          <p>
+            A selection of successfully submitted
+            applications currently awaiting review.
+          </p>
+
+        </div>
+
+
+        <a
+          routerLink="/admin/applications"
+          class="view-all">
+
+          View all →
+
+        </a>
+
+      </div>
+
+
+
+      @if (dashboardApplications.length > 0) {
+
+        <div class="table-container">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Application
+                </th>
+
+                <th>
+                  Customer
+                </th>
+
+                <th>
+                  Loan Type
+                </th>
+
+                <th>
+                  Amount
+                </th>
+
+                <th>
+                  Submitted
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                application
+                of dashboardApplications;
+                track application.id
+              ) {
+
+                <tr>
+
+                  <td class="application-id">
+
+                    #{{ application.id }}
+
+                  </td>
+
+
+                  <td>
+
+                    {{ application.customer }}
+
+                  </td>
+
+
+                  <td>
+
+                    {{ application.loanType }}
+
+                  </td>
+
+
+                  <td class="amount">
+
+                    R{{ application.amount | number }}
+
+                  </td>
+
+
+                  <td>
+
+                    {{ application.submittedDate }}
+
+                  </td>
+
+
+                  <td>
+
+                    <span class="status pending">
+
+                      Ready for review
+
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <button
+                      type="button"
+                      class="review-button"
+                      (click)="reviewApplication(
+                        application.id
+                      )">
+
+                      Review
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      }
+
+      @else {
+
+        <div class="empty-state">
+
+          <h3>
+            No applications waiting
+          </h3>
+
+          <p>
+            There are currently no submitted
+            applications available for review.
+          </p>
+
+        </div>
+
+      }
+
+    </section>
+
+  </main>
+
+</div>

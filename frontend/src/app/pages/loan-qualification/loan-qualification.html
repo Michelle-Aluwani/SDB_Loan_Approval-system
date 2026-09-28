@@ -1,0 +1,785 @@
+<div class="qualification-page">
+
+  <!-- HEADER -->
+  <header class="qualification-header">
+
+    <button
+      type="button"
+      class="back-button"
+      routerLink="/dashboard">
+      ← Back to Dashboard
+    </button>
+
+    <span class="portal-name">
+      Loan Approval
+    </span>
+
+  </header>
+
+
+  <main class="qualification-container">
+
+    <!-- PAGE INTRODUCTION -->
+    <section class="page-heading">
+
+      <p class="eyebrow">
+        Quick eligibility check
+      </p>
+
+      <h1>
+        Do I qualify for a {{ loanName }}?
+      </h1>
+
+      <p>
+        Enter a few details below to check whether you
+        meet the basic requirements for this loan.
+        No documents are required.
+      </p>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- FORM -->
+    <!-- ============================= -->
+
+    @if (!checked) {
+
+      <section class="qualification-card">
+
+        <div class="card-heading">
+
+          <h2>
+            Tell us about yourself
+          </h2>
+
+          <p>
+            This will only take a moment.
+          </p>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <!-- AGE -->
+
+          <div class="form-group">
+
+            <label for="age">
+              Age
+            </label>
+
+            <input
+              id="age"
+              type="number"
+              min="18"
+              [(ngModel)]="form.age"
+              placeholder="Enter your age">
+
+          </div>
+
+
+          <!-- EMPLOYMENT -->
+
+          <div class="form-group">
+
+            <label for="employmentStatus">
+              Employment status
+            </label>
+
+            <select
+              id="employmentStatus"
+              [(ngModel)]="form.employmentStatus">
+
+              <option value="">
+                Select employment status
+              </option>
+
+              <option value="EMPLOYED">
+                Employed
+              </option>
+
+              <option value="SELF_EMPLOYED">
+                Self-employed
+              </option>
+
+              <option value="STUDENT">
+                Student
+              </option>
+
+              <option value="OTHER">
+                Other
+              </option>
+
+            </select>
+
+          </div>
+
+        <!-- ================================= -->
+        <!-- INCOME AND EXPENSES -->
+        <!-- ================================= -->
+
+        @if (loanType !== 'student') {
+
+        <div class="form-group">
+
+            <label for="monthlyIncome">
+            Gross monthly income
+            </label>
+
+            <div class="money-input">
+
+            <span>R</span>
+
+            <input
+                id="monthlyIncome"
+                type="number"
+                min="0"
+                [(ngModel)]="form.monthlyIncome"
+                placeholder="0">
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="monthlyExpenses">
+            Monthly expenses
+            </label>
+
+            <div class="money-input">
+
+            <span>R</span>
+
+            <input
+                id="monthlyExpenses"
+                type="number"
+                min="0"
+                [(ngModel)]="form.monthlyExpenses"
+                placeholder="0">
+
+            </div>
+
+        </div>
+
+        }
+          <!-- REQUESTED AMOUNT -->
+
+          <div class="form-group full-width">
+
+            <label for="requestedAmount">
+              How much would you like to borrow?
+            </label>
+
+            <div class="money-input">
+
+              <span>R</span>
+
+              <input
+                id="requestedAmount"
+                type="number"
+                min="0"
+                [(ngModel)]="form.requestedAmount"
+                placeholder="Enter requested amount">
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+<!-- ================================= -->
+<!-- STUDENT LOAN -->
+<!-- ================================= -->
+
+@if (loanType === 'student') {
+
+  <div class="loan-specific-section">
+
+    <div class="specific-heading">
+
+      <h3>
+        Student Loan information
+      </h3>
+
+      <p>
+        Your financial requirements depend on
+        whether you study full-time or part-time.
+      </p>
+
+    </div>
+
+
+    <!-- STUDY TYPE -->
+
+    <div class="form-group">
+
+      <label for="studyType">
+        How are you studying?
+      </label>
+
+      <select
+        id="studyType"
+        [(ngModel)]="form.studyType">
+
+        <option value="">
+          Select study type
+        </option>
+
+        <option value="FULL_TIME">
+          Full-time
+        </option>
+
+        <option value="PART_TIME">
+          Part-time
+        </option>
+
+      </select>
+
+    </div>
+
+
+
+    <!-- ============================= -->
+    <!-- FULL-TIME STUDENT -->
+    <!-- ============================= -->
+
+    @if (form.studyType === 'FULL_TIME') {
+
+      <div class="student-path">
+
+        <div class="student-info-box">
+
+          <strong>
+            Full-time student
+          </strong>
+
+          <p>
+            For this eligibility check, we'll assess
+            the guarantor/surety who will cover the
+            interest and fees while you study.
+          </p>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="hasGuarantor">
+            Do you have a full-time employed
+            guarantor/surety?
+          </label>
+
+          <select
+            id="hasGuarantor"
+            [(ngModel)]="form.hasGuarantor">
+
+            <option value="">
+              Select an answer
+            </option>
+
+            <option value="YES">
+              Yes
+            </option>
+
+            <option value="NO">
+              No
+            </option>
+
+          </select>
+
+        </div>
+
+
+        @if (form.hasGuarantor === 'YES') {
+
+          <div class="guarantor-fields">
+
+            <h4>
+              Guarantor / Surety finances
+            </h4>
+
+
+            <div class="form-grid">
+
+              <div class="form-group">
+
+                <label for="guarantorIncome">
+                  Guarantor gross monthly income
+                </label>
+
+                <div class="money-input">
+
+                  <span>R</span>
+
+                  <input
+                    id="guarantorIncome"
+                    type="number"
+                    min="0"
+                    [(ngModel)]="form.guarantorIncome"
+                    placeholder="0">
+
+                </div>
+
+                <small>
+                  Minimum R3 000 per month
+                </small>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="guarantorExpenses">
+                  Guarantor monthly expenses
+                </label>
+
+                <div class="money-input">
+
+                  <span>R</span>
+
+                  <input
+                    id="guarantorExpenses"
+                    type="number"
+                    min="0"
+                    [(ngModel)]="form.guarantorExpenses"
+                    placeholder="0">
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+
+
+    <!-- ============================= -->
+    <!-- PART-TIME STUDENT -->
+    <!-- ============================= -->
+
+    @if (form.studyType === 'PART_TIME') {
+
+      <div class="student-path">
+
+        <div class="student-info-box">
+
+          <strong>
+            Part-time student
+          </strong>
+
+          <p>
+            Part-time students make repayments while
+            studying, so we'll use your own income
+            and expenses for this eligibility check.
+          </p>
+
+        </div>
+
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label for="studentIncome">
+              Your gross monthly income
+            </label>
+
+            <div class="money-input">
+
+              <span>R</span>
+
+              <input
+                id="studentIncome"
+                type="number"
+                min="0"
+                [(ngModel)]="form.monthlyIncome"
+                placeholder="0">
+
+            </div>
+
+            <small>
+              Minimum R5 000 per month
+            </small>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="studentExpenses">
+              Your monthly expenses
+            </label>
+
+            <div class="money-input">
+
+              <span>R</span>
+
+              <input
+                id="studentExpenses"
+                type="number"
+                min="0"
+                [(ngModel)]="form.monthlyExpenses"
+                placeholder="0">
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+}
+
+
+        <!-- ============================= -->
+        <!-- VEHICLE FINANCE -->
+        <!-- ============================= -->
+
+        @if (loanType === 'vehicle') {
+
+          <div class="loan-specific-section">
+
+            <div class="specific-heading">
+
+              <h3>
+                Vehicle Finance requirement
+              </h3>
+
+              <p>
+                We just need one additional detail
+                for this loan.
+              </p>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="driversLicence">
+                Do you have a valid South African
+                driver's licence?
+              </label>
+
+              <select
+                id="driversLicence"
+                [(ngModel)]="form.hasDriversLicence">
+
+                <option value="">
+                  Select an answer
+                </option>
+
+                <option value="YES">
+                  Yes
+                </option>
+
+                <option value="NO">
+                  No
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        }
+
+
+        <!-- ============================= -->
+        <!-- HOME LOAN -->
+        <!-- ============================= -->
+
+        @if (loanType === 'home') {
+
+          <div class="loan-specific-section">
+
+            <div class="specific-heading">
+
+              <h3>
+                Home Loan information
+              </h3>
+
+              <p>
+                Tell us the approximate value of
+                the property.
+              </p>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="propertyPrice">
+                Property price
+              </label>
+
+              <div class="money-input">
+
+                <span>R</span>
+
+                <input
+                  id="propertyPrice"
+                  type="number"
+                  min="0"
+                  [(ngModel)]="form.propertyPrice"
+                  placeholder="Enter property price">
+
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+
+        <!-- ============================= -->
+        <!-- DEBT CONSOLIDATION -->
+        <!-- ============================= -->
+
+        @if (loanType === 'debt') {
+
+          <div class="loan-specific-section">
+
+            <div class="specific-heading">
+
+              <h3>
+                Debt Consolidation information
+              </h3>
+
+              <p>
+                Tell us how many debts you would
+                like to consolidate.
+              </p>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="numberOfDebts">
+                Number of debts
+              </label>
+
+              <input
+                id="numberOfDebts"
+                type="number"
+                min="1"
+                max="3"
+                [(ngModel)]="form.numberOfDebts"
+                placeholder="Enter number of debts">
+
+            </div>
+
+          </div>
+
+        }
+
+
+        <!-- ============================= -->
+        <!-- FORM BOTTOM -->
+        <!-- ============================= -->
+
+        <div class="form-bottom">
+
+          <div class="precheck-notice">
+
+            <span class="info-icon">
+              i
+            </span>
+
+            <p>
+              This is a basic eligibility pre-check.
+              It does not mean that your loan has
+              been approved.
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="primary-button"
+            (click)="checkQualification()">
+            Check if I qualify
+          </button>
+
+        </div>
+
+      </section>
+
+    }
+
+
+    <!-- ============================= -->
+    <!-- QUALIFIES -->
+    <!-- ============================= -->
+
+    @if (checked && mayQualify) {
+
+      <section class="result-card successful">
+
+        <div class="result-icon">
+          ✓
+        </div>
+
+
+        <p class="result-eyebrow">
+          Eligibility check complete
+        </p>
+
+
+        <h2>
+          You may qualify
+        </h2>
+
+
+        <p class="result-message">
+          Based on the information you provided,
+          you meet the requirements used in this
+          basic {{ loanName }} eligibility check.
+        </p>
+
+
+        <div class="result-information">
+
+          <strong>
+            What happens next?
+          </strong>
+
+          <p>
+            You can continue to the full loan
+            application where you'll provide the
+            remaining information and supporting
+            documents.
+          </p>
+
+        </div>
+
+
+        <p class="disclaimer">
+          This result is only an indication and
+          does not guarantee final loan approval.
+        </p>
+
+
+        <div class="result-actions">
+
+          <button
+            type="button"
+            class="secondary-button"
+            (click)="tryAgain()">
+            Check again
+          </button>
+
+
+          <button
+            type="button"
+            class="primary-button"
+            (click)="applyNow()">
+            Apply for this loan
+          </button>
+
+        </div>
+
+      </section>
+
+    }
+
+
+    <!-- ============================= -->
+    <!-- DOES NOT QUALIFY -->
+    <!-- ============================= -->
+
+    @if (checked && !mayQualify) {
+
+      <section class="result-card unsuccessful">
+
+        <div class="result-icon">
+          !
+        </div>
+
+
+        <p class="result-eyebrow">
+          Eligibility check complete
+        </p>
+
+
+        <h2>
+          You may not meet the requirements
+        </h2>
+
+
+        <p class="result-message">
+          Based on the information you provided,
+          some of the basic requirements for this
+          {{ loanName }} were not met.
+        </p>
+
+
+        <div class="reason-section">
+
+          <strong>
+            Things to review
+          </strong>
+
+
+          <div class="reason-list">
+
+            @for (reason of reasons; track reason) {
+
+              <div class="reason-item">
+
+                <span>!</span>
+
+                <p>
+                  {{ reason }}
+                </p>
+
+              </div>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <p class="disclaimer">
+          This is only a basic eligibility check,
+          not a final lending decision.
+        </p>
+
+
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="tryAgain()">
+          Change my information
+        </button>
+
+      </section>
+
+    }
+
+  </main>
+
+</div>

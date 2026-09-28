@@ -1,0 +1,732 @@
+<div class="admin-layout">
+
+  <!-- ================================= -->
+  <!-- SIDEBAR -->
+  <!-- ================================= -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+      <div class="brand-mark">
+        S
+      </div>
+
+      <div>
+        <h2>Loan Management</h2>
+        <span>Employee Portal</span>
+      </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+      <a
+        routerLink="/admin"
+        class="nav-item">
+
+        <span class="nav-icon">▦</span>
+        Dashboard
+
+      </a>
+
+
+      <a
+        routerLink="/admin/applications"
+        class="nav-item">
+
+        <span class="nav-icon">▤</span>
+        Loan Applications
+
+      </a>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- ================================= -->
+  <!-- MAIN -->
+  <!-- ================================= -->
+
+  <main class="main-content">
+
+    <header class="topbar">
+
+      <div>
+
+        <span class="page-label">
+          APPLICATION #{{ application.id }}
+        </span>
+
+        <h1>
+          Review Application
+        </h1>
+
+      </div>
+
+
+      <div class="account-area">
+
+        <button
+          type="button"
+          class="account-button"
+          (click)="toggleAccountMenu()">
+
+          <span class="employee-avatar">
+            {{ adminName.charAt(0) }}
+          </span>
+
+        </button>
+
+
+        @if (showAccountMenu) {
+
+          <div class="account-menu">
+
+            <div class="account-info">
+
+              <strong>
+                {{ adminName }}
+              </strong>
+
+              <span>
+                Loan Administrator
+              </span>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="menu-logout"
+              (click)="logout()">
+
+              Logout
+
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+    </header>
+
+
+    <div class="review-container">
+
+
+      <!-- ================================= -->
+      <!-- APPLICATION HEADER -->
+      <!-- ================================= -->
+
+      <section class="application-heading">
+
+        <div>
+
+          <a
+            routerLink="/admin"
+            class="back-link">
+
+            ← Back
+
+          </a>
+
+
+          <h2>
+            {{ application.customer.fullName }}
+          </h2>
+
+
+          <p>
+            {{ application.loan.type }}
+            · Submitted
+            {{ application.submittedDate }}
+          </p>
+
+        </div>
+
+
+        <span
+          class="status"
+          [class.pending]="application.status === 'PENDING'"
+          [class.approved]="application.status === 'APPROVED'"
+          [class.rejected]="application.status === 'REJECTED'">
+
+          {{ application.status.replace('_', ' ') }}
+
+        </span>
+
+      </section>
+
+
+
+      <!-- ================================= -->
+      <!-- CUSTOMER INFORMATION -->
+      <!-- ================================= -->
+
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <h3>
+            Customer Information
+          </h3>
+
+        </div>
+
+
+        <div class="details-grid">
+
+          <div class="detail">
+
+            <span>
+              Full name
+            </span>
+
+            <strong>
+              {{ application.customer.fullName }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              ID number
+            </span>
+
+            <strong>
+              {{ application.customer.idNumber }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Email address
+            </span>
+
+            <strong>
+              {{ application.customer.email }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Phone number
+            </span>
+
+            <strong>
+              {{ application.customer.phoneNumber }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail full">
+
+            <span>
+              Residential address
+            </span>
+
+            <strong>
+              {{ application.customer.residentialAddress }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ================================= -->
+      <!-- LOAN INFORMATION -->
+      <!-- ================================= -->
+
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <h3>
+            Loan Information
+          </h3>
+
+        </div>
+
+
+        <div class="details-grid">
+
+          <div class="detail">
+
+            <span>
+              Loan type
+            </span>
+
+            <strong>
+              {{ application.loan.type }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Requested amount
+            </span>
+
+            <strong>
+              R{{ application.loan.requestedAmount | number }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Requested term
+            </span>
+
+            <strong>
+              {{ application.loan.termMonths }} months
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ================================= -->
+      <!-- FINANCIAL INFORMATION -->
+      <!-- ================================= -->
+
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <h3>
+            Financial Information
+          </h3>
+
+        </div>
+
+
+        <div class="details-grid">
+
+          <div class="detail">
+
+            <span>
+              Employment status
+            </span>
+
+            <strong>
+              {{ application.financial.employmentStatus }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Employer
+            </span>
+
+            <strong>
+              {{ application.financial.employerName }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Monthly income
+            </span>
+
+            <strong>
+              R{{ application.financial.monthlyIncome | number }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Monthly expenses
+            </span>
+
+            <strong>
+              R{{ application.financial.monthlyExpenses | number }}
+            </strong>
+
+          </div>
+
+
+          <div class="detail">
+
+            <span>
+              Declared disposable income
+            </span>
+
+            <strong>
+              R{{ application.financial.disposableIncome | number }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ================================= -->
+      <!-- PRE-QUALIFICATION -->
+      <!-- ================================= -->
+
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <h3>
+            Pre-Qualification
+          </h3>
+
+        </div>
+
+
+        <div class="qualification-box">
+
+          <div>
+
+            <span>
+              Pre-check result
+            </span>
+
+            <strong>
+              May qualify
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Requirements version
+            </span>
+
+            <strong>
+              {{ application.qualification.requirementsVersion }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <p class="qualification-note">
+
+          The pre-qualification result is an
+          initial rules-based check and does not
+          represent final approval.
+
+        </p>
+
+      </section>
+
+
+
+      <!-- ================================= -->
+      <!-- DOCUMENTS -->
+      <!-- ================================= -->
+
+      <section class="detail-card">
+
+        <div class="card-heading">
+
+          <div>
+
+            <h3>
+              Uploaded Documents
+            </h3>
+
+            <p>
+              Documents can be reviewed inside
+              the employee portal.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="documents-list">
+
+          @for (
+            document of application.documents;
+            track document.id
+          ) {
+
+            <div class="document-row">
+
+              <div class="document-info">
+
+                <div class="document-icon">
+                  PDF
+                </div>
+
+
+                <div>
+
+                  <strong>
+                    {{ document.name }}
+                  </strong>
+
+                  <span>
+                    Uploaded document
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <button
+                type="button"
+                class="preview-button"
+                (click)="viewDocument(document)">
+
+                View document
+
+              </button>
+
+            </div>
+
+          }
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ================================= -->
+      <!-- PREVIEW -->
+      <!-- ================================= -->
+
+      @if (selectedDocument) {
+
+        <section class="document-preview">
+
+          <div class="preview-heading">
+
+            <div>
+
+              <span>
+                DOCUMENT PREVIEW
+              </span>
+
+              <h3>
+                {{ selectedDocument.name }}
+              </h3>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="close-preview"
+              (click)="closeDocument()">
+
+              ×
+
+            </button>
+
+          </div>
+
+
+          <div class="preview-frame">
+
+            <iframe
+              [src]="selectedDocument.previewUrl"
+              title="Document preview">
+            </iframe>
+
+          </div>
+
+
+          <p class="security-note">
+
+            This document is displayed for review
+            inside the employee portal.
+
+          </p>
+
+        </section>
+
+      }
+
+
+
+      <!-- ================================= -->
+      <!-- PREVIOUS DECISION -->
+      <!-- ================================= -->
+
+      @if (!canMakeDecision) {
+
+        <section class="decision-complete">
+
+          <span>
+            DECISION RECORDED
+          </span>
+
+          <h3>
+            {{ application.status }}
+          </h3>
+
+
+          @if (application.reviewedBy) {
+
+            <p>
+              Reviewed by
+              {{ application.reviewedBy }}
+              on
+              {{ application.reviewedDate }}.
+            </p>
+
+          }
+
+        </section>
+
+      }
+
+
+
+      <!-- ================================= -->
+      <!-- DECISION -->
+      <!-- ================================= -->
+
+      @if (canMakeDecision) {
+
+        <section class="decision-section">
+
+          <div>
+
+            <h3>
+              Application Decision
+            </h3>
+
+            <p>
+              Review the application information
+              and supporting documents before
+              making a decision.
+            </p>
+
+          </div>
+
+
+          @if (!showRejectBox) {
+
+            <div class="decision-buttons">
+
+              <button
+                type="button"
+                class="reject-button"
+                (click)="openRejectBox()">
+
+                Reject Application
+
+              </button>
+
+
+              <button
+                type="button"
+                class="approve-button"
+                (click)="approveApplication()">
+
+                Approve Application
+
+              </button>
+
+            </div>
+
+          }
+
+
+          @if (showRejectBox) {
+
+            <div class="reject-box">
+
+              <label for="rejectionReason">
+
+                Reason for rejection
+
+              </label>
+
+
+              <textarea
+                id="rejectionReason"
+                rows="4"
+                placeholder="Enter the reason for rejecting this application..."
+                #reasonInput
+                (input)="rejectionReason = reasonInput.value">
+              </textarea>
+
+
+              <div class="reject-actions">
+
+                <button
+                  type="button"
+                  class="cancel-button"
+                  (click)="cancelReject()">
+
+                  Cancel
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="confirm-reject-button"
+                  [disabled]="!rejectionReason.trim()"
+                  (click)="rejectApplication()">
+
+                  Confirm Rejection
+
+                </button>
+
+              </div>
+
+            </div>
+
+          }
+
+        </section>
+
+      }
+
+    </div>
+
+  </main>
+
+</div>

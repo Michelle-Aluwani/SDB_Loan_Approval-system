@@ -1,0 +1,205 @@
+{
+  "version": "2026-09",
+  "lastUpdated": "2026-09-28",
+  "sourcePriority": "Standard Bank South Africa website",
+
+  "personal": {
+    "name": "Personal Loan",
+    "category": "Unsecured Credit",
+
+    "qualification": {
+      "minimumAge": 18,
+      "maximumAge": 65,
+      "minimumMonthlyIncome": 3000,
+      "requiresIncome": true,
+      "requiresExpenses": true,
+      "requiresAffordabilityCheck": true,
+      "requiresCreditAssessment": true
+    },
+
+    "loan": {
+      "maximumAmount": 300000,
+      "minimumTermMonths": 12,
+      "maximumTermMonths": 84
+    },
+
+    "documents": {
+      "southAfricanId": true,
+      "proofOfIncome": true,
+      "bankStatements": true
+    }
+  },
+
+  "revolving": {
+    "name": "Revolving Loan",
+    "category": "Unsecured Credit",
+
+    "qualification": {
+      "minimumAge": 18,
+      "minimumMonthlyIncome": 8000,
+      "requiresIncome": true,
+      "requiresExpenses": true,
+      "requiresAffordabilityCheck": true,
+      "requiresCreditAssessment": true
+    },
+
+    "loan": {
+      "minimumAmount": 6000,
+      "maximumAmount": 300000,
+      "maximumTermMonths": 72
+    },
+
+    "documents": {
+      "southAfricanId": true,
+      "proofOfIncome": true,
+      "proofOfResidence": true
+    }
+  },
+
+  "student": {
+    "name": "Student Loan",
+    "category": "Education",
+
+    "qualification": {
+      "minimumCourseDurationMonths": 3,
+      "requiresAccreditedInstitution": true,
+
+      "fullTime": {
+        "requiresStudentIncome": false,
+        "requiresGuarantor": true,
+        "requiresGuarantorEmployment": true,
+        "guarantorMinimumMonthlyIncome": 3000,
+        "requiresGuarantorExpenses": true,
+        "requiresGuarantorAffordabilityCheck": true
+      },
+
+      "partTime": {
+        "requiresStudentIncome": true,
+        "minimumMonthlyIncome": 5000,
+        "requiresStudentExpenses": true,
+        "requiresGuarantor": false,
+        "requiresStudentAffordabilityCheck": true
+      }
+    },
+
+    "loan": {
+      "minimumAmount": 5000,
+      "maximumAmountDeterminedByAffordability": true,
+      "minimumTermMonths": 12,
+      "maximumTermMonths": 120
+    },
+
+    "funding": {
+      "tuition": {
+        "allowed": true,
+        "paidDirectlyToInstitution": true
+      },
+
+      "accommodation": {
+        "allowed": true,
+        "maximumPerYear": 60000,
+        "requiresLeaseAgreement": true
+      },
+
+      "textbooksAndEquipment": {
+        "allowed": true,
+        "maximumWithProof": 20000,
+        "maximumWithoutProof": 6000
+      }
+    },
+
+    "documents": {
+      "acceptanceOrRegistrationLetter": true,
+      "proofOfStudyCosts": true,
+      "latestAcademicResults": true,
+      "suretyDocumentsRequiredForFullTime": true
+    }
+  },
+
+  "vehicle": {
+    "name": "Vehicle Finance",
+    "category": "Vehicle and Asset Finance",
+
+    "qualification": {
+      "minimumAge": 18,
+      "requiresSouthAfricanDriversLicence": true,
+      "requiresIncome": true,
+      "requiresExpenses": true,
+      "requiresAffordabilityCheck": true,
+      "requiresCreditCheck": true,
+      "requiresFicaCheck": true
+    },
+
+    "loan": {
+      "minimumTermMonths": 12,
+      "maximumTermMonths": 84
+    },
+
+    "documents": {
+      "southAfricanId": true,
+      "southAfricanDriversLicence": true,
+      "proofOfIncome": true,
+      "bankStatementsAlternative": true,
+      "proofOfResidence": true
+    }
+  },
+
+  "home": {
+    "name": "Home Loan",
+    "category": "Property Finance",
+
+    "qualification": {
+      "requiresIncome": true,
+      "requiresExpenses": true,
+      "supportsJointApplication": true,
+      "requiresAffordabilityCheck": true,
+      "requiresCreditAssessment": true
+    },
+
+    "affordability": {
+      "usesApplicantIncome": true,
+      "usesCoApplicantIncome": true,
+      "usesMonthlyExpenses": true,
+      "requestedLoanAmountComparedWithAffordability": true
+    },
+
+    "application": {
+      "supportsIndividualApplication": true,
+      "supportsJointApplication": true
+    },
+
+    "documents": {
+      "southAfricanId": true,
+      "latestPayslips": true,
+      "monthlyExpenses": true,
+      "jointApplicantDocumentsRequiredWhenApplicable": true,
+      "proofOfResidence": true
+    }
+  },
+
+  "debt": {
+    "name": "Debt Consolidation",
+    "category": "Debt Management",
+
+    "qualification": {
+      "minimumAge": 18,
+      "minimumMonthlyIncome": 3000,
+      "requiresIncome": true,
+      "requiresExpenses": true,
+      "requiresAffordabilityCheck": true,
+      "requiresCreditAssessment": true
+    },
+
+    "debts": {
+      "minimumNumberOfDebts": 1,
+      "maximumNumberOfDebts": 3,
+      "requiresQualifyingPersonalCredit": true
+    },
+
+    "documents": {
+      "southAfricanId": true,
+      "proofOfIncome": true,
+      "settlementInformation": true
+    }
+  }
+}

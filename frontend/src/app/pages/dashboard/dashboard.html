@@ -1,0 +1,202 @@
+<div class="dashboard-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+      <div class="brand-icon">LA</div>
+
+      <div>
+        <strong>Loan Approval</strong>
+        <span>Customer Portal</span>
+      </div>
+    </div>
+
+<nav class="side-menu">
+
+  <a
+    class="active"
+    routerLink="/dashboard">
+    Dashboard
+  </a>
+
+  <a routerLink="/applications">
+    My Applications
+  </a>
+
+<a routerLink="/apply" class="apply-button">
+  Apply for a Loan
+</a>
+
+</nav>
+
+  </aside>
+
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+
+    <!-- TOP NAV -->
+    <header class="topbar">
+
+      <div>
+        <h2>Customer Dashboard</h2>
+      </div>
+
+      <div class="profile-wrapper">
+
+        <button
+          class="profile-button"
+          type="button"
+          (click)="toggleProfileMenu()">
+
+          <span class="profile-initials">
+            CU
+          </span>
+
+          <span class="profile-arrow">
+            ▾
+          </span>
+
+        </button>
+
+
+        @if (profileMenuOpen) {
+
+          <div class="profile-menu">
+
+            <div class="profile-summary">
+              <strong>Customer</strong>
+              <span>{{ email }}</span>
+            </div>
+
+            <a routerLink="/profile">
+              My Profile
+            </a>
+
+            <button
+              type="button"
+              class="logout-button"
+              (click)="logout()">
+              Logout
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+    </header>
+
+
+    <!-- DASHBOARD CONTENT -->
+    <main class="dashboard-content">
+
+    <section class="welcome-section">
+
+      <div class="welcome-text">
+
+        <p class="eyebrow">
+          Welcome back
+        </p>
+
+        <h1>What can we help you with?</h1>
+
+        <p>
+          Explore our available loan products, check whether you
+          qualify and manage your existing applications.
+        </p>
+
+      </div>
+
+      <a
+        routerLink="/apply"
+        class="apply-loan-button">
+        + Apply for a Loan
+      </a>
+
+    </section>
+
+
+      <!-- QUICK INFORMATION -->
+      <section class="summary-grid">
+
+        <div class="summary-card">
+          <span>My Applications</span>
+          <strong>0</strong>
+          <small>No active applications</small>
+        </div>
+
+        <div class="summary-card">
+          <span>My Loans</span>
+          <strong>0</strong>
+          <small>No active loans</small>
+        </div>
+
+        <div class="summary-card">
+          <span>Eligible Products</span>
+          <strong>—</strong>
+          <small>Complete eligibility checks</small>
+        </div>
+
+      </section>
+
+
+      <!-- LOANS -->
+      <section class="loans-section">
+
+        <div class="section-heading">
+
+          <div>
+            <p class="eyebrow">Explore</p>
+            <h2>Our loan products</h2>
+          </div>
+
+          <p>
+            Select a product to learn more and check your eligibility.
+          </p>
+
+        </div>
+
+
+        <div class="loan-grid">
+
+          @for (loan of loans; track loan.name) {
+
+            <article class="loan-card">
+
+              <span class="loan-category">
+                {{ loan.category }}
+              </span>
+
+              <h3>{{ loan.name }}</h3>
+
+              <strong class="loan-amount">
+                {{ loan.amount }}
+              </strong>
+
+              <p>
+                {{ loan.description }}
+              </p>
+
+          <button
+            type="button"
+            class="qualify-button"
+            (click)="checkQualification(loan.name)">
+            Do I qualify?
+          </button>
+
+            </article>
+
+          }
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+</div>

@@ -1,0 +1,219 @@
+<div class="details-page">
+
+  <header class="details-header">
+
+    <div class="header-content">
+
+      <a
+        routerLink="/applications"
+        class="back-link">
+        ← My Applications
+      </a>
+
+      <span class="brand">
+        Loan Approval
+      </span>
+
+    </div>
+
+  </header>
+
+
+  <main class="details-content">
+
+    @if (application) {
+
+      <section class="title-section">
+
+        <p class="eyebrow">
+          {{ application.id }}
+        </p>
+
+        <div class="title-row">
+
+          <div>
+
+            <h1>
+              {{ application.loanName }}
+            </h1>
+
+            <p>
+              View the details and documents associated
+              with this loan.
+            </p>
+
+          </div>
+
+
+          <span
+            class="status"
+            [class.finished]="
+              application.status === 'FINISHED'
+            ">
+
+            {{ application.status }}
+
+          </span>
+
+        </div>
+
+      </section>
+
+
+
+      <section class="details-card">
+
+        <h2>
+          Loan details
+        </h2>
+
+
+        <div class="details-grid">
+
+          <div>
+
+            <label>
+              Application number
+            </label>
+
+            <strong>
+              {{ application.id }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Loan product
+            </label>
+
+            <strong>
+              {{ application.loanName }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Original amount
+            </label>
+
+            <strong>
+              {{
+                formatAmount(
+                  application.amount
+                )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Submitted
+            </label>
+
+            <strong>
+              {{ application.submittedDate }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Approved
+            </label>
+
+            <strong>
+              {{ application.approvedDate }}
+            </strong>
+
+          </div>
+
+
+          @if (application.finishedDate) {
+
+            <div>
+
+              <label>
+                Finished paying
+              </label>
+
+              <strong>
+                {{ application.finishedDate }}
+              </strong>
+
+            </div>
+
+          }
+
+        </div>
+
+      </section>
+
+
+
+      <!-- CONTRACT -->
+
+      <section class="contract-card">
+
+        <div>
+
+          <p class="eyebrow">
+            Documents
+          </p>
+
+          <h2>
+            Signed loan contract
+          </h2>
+
+          <p>
+            A copy of the signed agreement for this loan
+            is available below.
+          </p>
+
+        </div>
+
+
+        <a
+          href="/mock-loan-contract.pdf"
+          download="Loan-Contract.pdf"
+          class="download-button">
+          Download Contract
+        </a>
+
+      </section>
+
+    }
+
+    @else {
+
+      <section class="not-found">
+
+        <h1>
+          Application not found
+        </h1>
+
+        <p>
+          This application is not available for viewing.
+        </p>
+
+        <a routerLink="/applications">
+          Return to My Applications
+        </a>
+
+      </section>
+
+    }
+
+  </main>
+
+</div>

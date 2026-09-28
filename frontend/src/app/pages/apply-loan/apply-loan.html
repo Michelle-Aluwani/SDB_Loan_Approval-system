@@ -1,0 +1,1572 @@
+<div class="dashboard-layout">
+
+  <!-- =========================
+       SIDEBAR
+       ========================= -->
+
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+      <div class="brand-icon">
+        LA
+      </div>
+
+      <div>
+        <strong>Loan Approval</strong>
+        <span>Customer Portal</span>
+      </div>
+
+    </div>
+
+
+    <nav class="side-menu">
+
+      <a routerLink="/dashboard">
+        Dashboard
+      </a>
+
+      <a routerLink="/applications">
+        My Applications
+      </a>
+
+      <a
+        routerLink="/apply"
+        class="active">
+        Apply for a Loan
+      </a>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- =========================
+       MAIN
+       ========================= -->
+
+  <div class="main-area">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+      <h2>
+        Apply for a Loan
+      </h2>
+
+
+      <div class="profile-wrapper">
+
+        <button
+          type="button"
+          class="profile-button"
+          (click)="toggleProfileMenu()">
+
+          <span class="profile-initials">
+            CU
+          </span>
+
+          <span class="profile-arrow">
+            ▾
+          </span>
+
+        </button>
+
+
+        @if (profileMenuOpen) {
+
+          <div class="profile-menu">
+
+            <div class="profile-summary">
+
+              <strong>Customer</strong>
+
+              <span>
+                {{ email }}
+              </span>
+
+            </div>
+
+            <a routerLink="/profile">
+              My Profile
+            </a>
+
+            <button
+              type="button"
+              class="logout-button"
+              (click)="logout()">
+              Logout
+            </button>
+
+          </div>
+
+        }
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================
+         CONTENT
+         ========================= -->
+
+    <main class="application-content">
+
+
+      @if (!submitted) {
+
+
+        <!-- PAGE TITLE -->
+
+        <section class="page-heading">
+
+          <p class="eyebrow">
+            New application
+          </p>
+
+          <h1>
+            Apply for a loan
+          </h1>
+
+          <p>
+            Complete the steps below to submit your
+            loan application.
+          </p>
+
+        </section>
+
+
+        <!-- =====================
+             PROGRESS
+             ===================== -->
+
+        <div class="progress-container">
+
+          <div
+            class="progress-step"
+            [class.active]="currentStep >= 1">
+
+            <span>1</span>
+
+            <p>Loan</p>
+
+          </div>
+
+
+          <div
+            class="progress-line"
+            [class.active]="currentStep >= 2">
+          </div>
+
+
+          <div
+            class="progress-step"
+            [class.active]="currentStep >= 2">
+
+            <span>2</span>
+
+            <p>Personal</p>
+
+          </div>
+
+
+          <div
+            class="progress-line"
+            [class.active]="currentStep >= 3">
+          </div>
+
+
+          <div
+            class="progress-step"
+            [class.active]="currentStep >= 3">
+
+            <span>3</span>
+
+            <p>Financial</p>
+
+          </div>
+
+
+          <div
+            class="progress-line"
+            [class.active]="currentStep >= 4">
+          </div>
+
+
+          <div
+            class="progress-step"
+            [class.active]="currentStep >= 4">
+
+            <span>4</span>
+
+            <p>Documents</p>
+
+          </div>
+
+
+          <div
+            class="progress-line"
+            [class.active]="currentStep >= 5">
+          </div>
+
+
+          <div
+            class="progress-step"
+            [class.active]="currentStep >= 5">
+
+            <span>5</span>
+
+            <p>Review</p>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             STEP 1
+             CHOOSE LOAN
+             ========================= -->
+
+        @if (currentStep === 1) {
+
+          <section class="form-card">
+
+            <div class="form-heading">
+
+              <p class="eyebrow">
+                Step 1
+              </p>
+
+              <h2>
+                Choose a loan
+              </h2>
+
+              <p>
+                Select the loan product you would
+                like to apply for.
+              </p>
+
+            </div>
+
+
+            <div class="loan-grid">
+
+              @for (
+                loan of loanProducts;
+                track loan.id
+              ) {
+
+                <button
+                  type="button"
+                  class="loan-option"
+                  (click)="selectLoan(loan)">
+
+                  <span class="loan-category">
+                    {{ loan.category }}
+                  </span>
+
+                  <h3>
+                    {{ loan.name }}
+                  </h3>
+
+                  <strong>
+                    {{ loan.amountInfo }}
+                  </strong>
+
+                  <p>
+                    {{ loan.description }}
+                  </p>
+
+                  <span class="select-text">
+                    Select loan →
+                  </span>
+
+                </button>
+
+              }
+
+            </div>
+
+          </section>
+
+        }
+
+
+
+        <!-- =========================
+             STEP 2
+             PERSONAL DETAILS
+             ========================= -->
+
+        @if (currentStep === 2) {
+
+          <section class="form-card">
+
+            <div class="form-heading">
+
+              <p class="eyebrow">
+                Step 2
+              </p>
+
+              <h2>
+                Personal details
+              </h2>
+
+              <p>
+                Tell us about yourself.
+              </p>
+
+            </div>
+
+
+            <div class="selected-loan-banner">
+
+              <span>Applying for</span>
+
+              <strong>
+                {{ selectedLoan?.name }}
+              </strong>
+
+            </div>
+
+
+            <div class="form-grid">
+
+              <div class="form-group">
+
+                <label for="fullName">
+                  Full name
+                </label>
+
+                <input
+                  id="fullName"
+                  type="text"
+                  [(ngModel)]="personalDetails.fullName"
+                  placeholder="Enter your full name">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="idNumber">
+                  South African ID number
+                </label>
+
+                <input
+                  id="idNumber"
+                  type="text"
+                  [(ngModel)]="personalDetails.idNumber"
+                  placeholder="Enter your ID number">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="email">
+                  Email address
+                </label>
+
+                <input
+                  id="email"
+                  type="email"
+                  [(ngModel)]="personalDetails.email">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="phone">
+                  Phone number
+                </label>
+
+                <input
+                  id="phone"
+                  type="tel"
+                  [(ngModel)]="personalDetails.phoneNumber"
+                  placeholder="Enter your phone number">
+
+              </div>
+
+
+              <div class="form-group full-width">
+
+                <label for="address">
+                  Residential address
+                </label>
+
+                <textarea
+                  id="address"
+                  [(ngModel)]="personalDetails.residentialAddress"
+                  placeholder="Enter your residential address">
+                </textarea>
+
+              </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+              <button
+                type="button"
+                class="secondary-button"
+                (click)="previousStep()">
+                Back
+              </button>
+
+              <button
+                type="button"
+                class="primary-button"
+                (click)="nextStep()">
+                Continue
+              </button>
+
+            </div>
+
+          </section>
+
+        }
+
+
+
+        <!-- =========================
+             STEP 3
+             FINANCIAL
+             ========================= -->
+
+        @if (currentStep === 3) {
+
+          <section class="form-card">
+
+            <div class="form-heading">
+
+              <p class="eyebrow">
+                Step 3
+              </p>
+
+              <h2>
+                Financial information
+              </h2>
+
+              <p>
+                Provide the financial information
+                required for your application.
+              </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+              <div class="form-group">
+
+                <label>
+                  Monthly income
+                </label>
+
+                <input
+                  type="number"
+                  [(ngModel)]="
+                    financialDetails.monthlyIncome
+                  "
+                  placeholder="R">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Monthly expenses
+                </label>
+
+                <input
+                  type="number"
+                  [(ngModel)]="
+                    financialDetails.monthlyExpenses
+                  "
+                  placeholder="R">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Requested loan amount
+                </label>
+
+                <input
+                  type="number"
+                  [(ngModel)]="
+                    financialDetails.requestedAmount
+                  "
+                  placeholder="R">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label>
+                  Employment status
+                </label>
+
+                <select
+                  [(ngModel)]="
+                    financialDetails.employmentStatus
+                  ">
+
+                  <option value="">
+                    Select status
+                  </option>
+
+                  <option value="EMPLOYED">
+                    Employed
+                  </option>
+
+                  <option value="SELF_EMPLOYED">
+                    Self-employed
+                  </option>
+
+                  <option value="STUDENT">
+                    Student
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group full-width">
+
+                <label>
+                  Employer name
+                </label>
+
+                <input
+                  type="text"
+                  [(ngModel)]="
+                    financialDetails.employerName
+                  "
+                  placeholder="Enter employer name">
+
+              </div>
+
+            </div>
+
+
+
+            <!-- =====================
+                 STUDENT
+                 ===================== -->
+
+            @if (selectedLoan?.id === 'student') {
+
+              <div class="loan-specific-section">
+
+                <h3>
+                  Student loan information
+                </h3>
+
+
+                <div class="form-grid">
+
+                  <div class="form-group">
+
+                    <label>
+                      Institution
+                    </label>
+
+                    <input
+                      type="text"
+                      [(ngModel)]="
+                        studentDetails.institution
+                      ">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Course / qualification
+                    </label>
+
+                    <input
+                      type="text"
+                      [(ngModel)]="
+                        studentDetails.course
+                      ">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Year of study
+                    </label>
+
+                    <input
+                      type="text"
+                      [(ngModel)]="
+                        studentDetails.studyYear
+                      ">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Study costs
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="
+                        studentDetails.studyCost
+                      "
+                      placeholder="R">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Guarantor full name
+                    </label>
+
+                    <input
+                      type="text"
+                      [(ngModel)]="
+                        studentDetails.guarantorName
+                      ">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Guarantor monthly income
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="
+                        studentDetails.guarantorIncome
+                      "
+                      placeholder="R">
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+
+
+            <!-- =====================
+                 VEHICLE
+                 ===================== -->
+
+            @if (selectedLoan?.id === 'vehicle') {
+
+              <div class="loan-specific-section">
+
+                <h3>
+                  Vehicle information
+                </h3>
+
+
+                <div class="form-grid">
+
+                  <div class="form-group">
+
+                    <label>
+                      Vehicle price
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="
+                        vehicleDetails.vehiclePrice
+                      "
+                      placeholder="R">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Vehicle condition
+                    </label>
+
+                    <select
+                      [(ngModel)]="
+                        vehicleDetails.vehicleType
+                      ">
+
+                      <option value="">
+                        Select
+                      </option>
+
+                      <option value="NEW">
+                        New
+                      </option>
+
+                      <option value="USED">
+                        Used
+                      </option>
+
+                    </select>
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Seller
+                    </label>
+
+                    <select
+                      [(ngModel)]="
+                        vehicleDetails.sellerType
+                      ">
+
+                      <option value="">
+                        Select
+                      </option>
+
+                      <option value="DEALER">
+                        Dealership
+                      </option>
+
+                      <option value="PRIVATE">
+                        Private seller
+                      </option>
+
+                    </select>
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Driver's licence number
+                    </label>
+
+                    <input
+                      type="text"
+                      [(ngModel)]="
+                        vehicleDetails.driversLicence
+                      ">
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+
+
+            <!-- =====================
+                 HOME
+                 ===================== -->
+
+            @if (selectedLoan?.id === 'home') {
+
+              <div class="loan-specific-section">
+
+                <h3>
+                  Property information
+                </h3>
+
+
+                <div class="form-grid">
+
+                  <div class="form-group">
+
+                    <label>
+                      Property price
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="
+                        homeDetails.propertyPrice
+                      "
+                      placeholder="R">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Deposit amount
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="
+                        homeDetails.depositAmount
+                      "
+                      placeholder="R">
+
+                  </div>
+
+
+                  <div class="form-group full-width">
+
+                    <label>
+                      Property address
+                    </label>
+
+                    <textarea
+                      [(ngModel)]="
+                        homeDetails.propertyAddress
+                      ">
+                    </textarea>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+
+
+            <!-- =====================
+                 DEBT
+                 ===================== -->
+
+            @if (selectedLoan?.id === 'debt') {
+
+              <div class="loan-specific-section">
+
+                <h3>
+                  Debt information
+                </h3>
+
+
+                <div class="form-grid">
+
+                  <div class="form-group">
+
+                    <label>
+                      Total qualifying debt
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="
+                        debtDetails.totalDebt
+                      "
+                      placeholder="R">
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label>
+                      Number of debts
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="
+                        debtDetails.numberOfDebts
+                      ">
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+
+
+            <div class="form-actions">
+
+              <button
+                type="button"
+                class="secondary-button"
+                (click)="previousStep()">
+                Back
+              </button>
+
+              <button
+                type="button"
+                class="primary-button"
+                (click)="nextStep()">
+                Continue to documents
+              </button>
+
+            </div>
+
+          </section>
+
+        }
+
+
+
+        <!-- =========================
+             STEP 4
+             DOCUMENTS
+             ========================= -->
+
+        @if (currentStep === 4) {
+
+          <section class="form-card">
+
+            <div class="form-heading">
+
+              <p class="eyebrow">
+                Step 4
+              </p>
+
+              <h2>
+                Supporting documents
+              </h2>
+
+              <p>
+                Upload the documents required to
+                support your application.
+              </p>
+
+            </div>
+
+
+            <div class="document-list">
+
+
+              <div class="document-upload">
+
+                <div>
+
+                  <strong>
+                    Identification document
+                  </strong>
+
+                  <p>
+                    Upload a copy of your identification.
+                  </p>
+
+                </div>
+
+                <label class="upload-button">
+
+                  Choose file
+
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    (change)="
+                      onFileSelected(
+                        $event,
+                        'idDocument'
+                      )
+                    ">
+
+                </label>
+
+                <span class="file-name">
+                  {{
+                    getDocumentName(
+                      'idDocument'
+                    )
+                  }}
+                </span>
+
+              </div>
+
+
+
+              <div class="document-upload">
+
+                <div>
+
+                  <strong>
+                    Latest payslip
+                  </strong>
+
+                  <p>
+                    Upload your latest available payslip.
+                  </p>
+
+                </div>
+
+                <label class="upload-button">
+
+                  Choose file
+
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    (change)="
+                      onFileSelected(
+                        $event,
+                        'payslip'
+                      )
+                    ">
+
+                </label>
+
+                <span class="file-name">
+                  {{
+                    getDocumentName(
+                      'payslip'
+                    )
+                  }}
+                </span>
+
+              </div>
+
+
+
+              <div class="document-upload">
+
+                <div>
+
+                  <strong>
+                    Bank statements
+                  </strong>
+
+                  <p>
+                    Upload the relevant bank statement document.
+                  </p>
+
+                </div>
+
+                <label class="upload-button">
+
+                  Choose file
+
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    (change)="
+                      onFileSelected(
+                        $event,
+                        'bankStatements'
+                      )
+                    ">
+
+                </label>
+
+                <span class="file-name">
+                  {{
+                    getDocumentName(
+                      'bankStatements'
+                    )
+                  }}
+                </span>
+
+              </div>
+
+
+
+              <div class="document-upload">
+
+                <div>
+
+                  <strong>
+                    Proof of residence
+                  </strong>
+
+                  <p>
+                    Upload your proof of residential address.
+                  </p>
+
+                </div>
+
+                <label class="upload-button">
+
+                  Choose file
+
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    (change)="
+                      onFileSelected(
+                        $event,
+                        'proofOfResidence'
+                      )
+                    ">
+
+                </label>
+
+                <span class="file-name">
+                  {{
+                    getDocumentName(
+                      'proofOfResidence'
+                    )
+                  }}
+                </span>
+
+              </div>
+
+
+
+              @if (selectedLoan?.id === 'student') {
+
+                <div class="document-upload special-document">
+
+                  <div>
+
+                    <strong>
+                      Proof of registration / acceptance
+                    </strong>
+
+                    <p>
+                      Upload your institution documentation.
+                    </p>
+
+                  </div>
+
+                  <label class="upload-button">
+
+                    Choose file
+
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      (change)="
+                        onFileSelected(
+                          $event,
+                          'additionalDocument'
+                        )
+                      ">
+
+                  </label>
+
+                  <span class="file-name">
+                    {{
+                      getDocumentName(
+                        'additionalDocument'
+                      )
+                    }}
+                  </span>
+
+                </div>
+
+              }
+
+
+              @if (selectedLoan?.id === 'vehicle') {
+
+                <div class="document-upload special-document">
+
+                  <div>
+
+                    <strong>
+                      Vehicle quotation
+                    </strong>
+
+                    <p>
+                      Upload the quotation or vehicle
+                      purchase documentation.
+                    </p>
+
+                  </div>
+
+                  <label class="upload-button">
+
+                    Choose file
+
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      (change)="
+                        onFileSelected(
+                          $event,
+                          'additionalDocument'
+                        )
+                      ">
+
+                  </label>
+
+                  <span class="file-name">
+                    {{
+                      getDocumentName(
+                        'additionalDocument'
+                      )
+                    }}
+                  </span>
+
+                </div>
+
+              }
+
+            </div>
+
+
+            <div class="information-box">
+
+              <strong>
+                Before continuing
+              </strong>
+
+              <p>
+                Your uploaded files are only being held
+                temporarily in this frontend demonstration.
+                They are not currently being sent to a server.
+              </p>
+
+            </div>
+
+
+            <div class="form-actions">
+
+              <button
+                type="button"
+                class="secondary-button"
+                (click)="previousStep()">
+                Back
+              </button>
+
+              <button
+                type="button"
+                class="primary-button"
+                (click)="nextStep()">
+                Review application
+              </button>
+
+            </div>
+
+          </section>
+
+        }
+
+
+
+        <!-- =========================
+             STEP 5
+             REVIEW
+             ========================= -->
+
+        @if (currentStep === 5) {
+
+          <section class="form-card">
+
+            <div class="form-heading">
+
+              <p class="eyebrow">
+                Step 5
+              </p>
+
+              <h2>
+                Review your application
+              </h2>
+
+              <p>
+                Check the information below before
+                submitting your application.
+              </p>
+
+            </div>
+
+
+
+            <div class="review-section">
+
+              <h3>
+                Loan
+              </h3>
+
+              <div class="review-grid">
+
+                <div>
+                  <span>Product</span>
+                  <strong>
+                    {{ selectedLoan?.name }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Requested amount</span>
+                  <strong>
+                    {{
+                      formatAmount(
+                        financialDetails.requestedAmount
+                      )
+                    }}
+                  </strong>
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            <div class="review-section">
+
+              <h3>
+                Personal information
+              </h3>
+
+              <div class="review-grid">
+
+                <div>
+                  <span>Full name</span>
+                  <strong>
+                    {{ personalDetails.fullName }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>ID number</span>
+                  <strong>
+                    {{ personalDetails.idNumber }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Email</span>
+                  <strong>
+                    {{ personalDetails.email }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Phone</span>
+                  <strong>
+                    {{ personalDetails.phoneNumber }}
+                  </strong>
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            <div class="review-section">
+
+              <h3>
+                Financial information
+              </h3>
+
+              <div class="review-grid">
+
+                <div>
+                  <span>Monthly income</span>
+                  <strong>
+                    {{
+                      formatAmount(
+                        financialDetails.monthlyIncome
+                      )
+                    }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Monthly expenses</span>
+                  <strong>
+                    {{
+                      formatAmount(
+                        financialDetails.monthlyExpenses
+                      )
+                    }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Employment</span>
+                  <strong>
+                    {{
+                      financialDetails.employmentStatus
+                    }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span>Employer</span>
+                  <strong>
+                    {{
+                      financialDetails.employerName
+                    }}
+                  </strong>
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            <div class="review-section">
+
+              <h3>
+                Documents
+              </h3>
+
+              <div class="document-review">
+
+                <span>
+                  ID document
+                </span>
+
+                <strong>
+                  {{
+                    getDocumentName(
+                      'idDocument'
+                    )
+                  }}
+                </strong>
+
+
+                <span>
+                  Payslip
+                </span>
+
+                <strong>
+                  {{
+                    getDocumentName(
+                      'payslip'
+                    )
+                  }}
+                </strong>
+
+
+                <span>
+                  Bank statements
+                </span>
+
+                <strong>
+                  {{
+                    getDocumentName(
+                      'bankStatements'
+                    )
+                  }}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+
+            <div class="declaration">
+
+              <strong>
+                Declaration
+              </strong>
+
+              <p>
+                By submitting this application, you
+                confirm that the information supplied
+                is accurate to the best of your knowledge.
+              </p>
+
+            </div>
+
+
+
+            <div class="form-actions">
+
+              <button
+                type="button"
+                class="secondary-button"
+                (click)="previousStep()">
+                Back
+              </button>
+
+              <button
+                type="button"
+                class="primary-button"
+                (click)="submitApplication()">
+                Submit Application
+              </button>
+
+            </div>
+
+          </section>
+
+        }
+
+      }
+
+
+
+      <!-- =========================
+           SUCCESS
+           ========================= -->
+
+      @if (submitted) {
+
+        <section class="success-card">
+
+          <div class="success-icon">
+            ✓
+          </div>
+
+          <p class="eyebrow">
+            Application submitted
+          </p>
+
+          <h1>
+            We've received your application
+          </h1>
+
+          <p>
+            Your {{ selectedLoan?.name }} application
+            has been submitted and will now appear in
+            your applications.
+          </p>
+
+
+          <div class="success-reference">
+
+            <span>
+              Application status
+            </span>
+
+            <strong>
+              PENDING
+            </strong>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="primary-button"
+            (click)="goToApplications()">
+            View My Applications
+          </button>
+
+        </section>
+
+      }
+
+    </main>
+
+  </div>
+
+</div>
