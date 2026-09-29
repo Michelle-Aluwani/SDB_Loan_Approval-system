@@ -248,6 +248,7 @@ export class MyApplications implements OnInit {
   ): boolean {
 
     return (
+      
       status === 'REJECTED' ||
       status === 'CANCELLED' ||
       status === 'FINISHED'

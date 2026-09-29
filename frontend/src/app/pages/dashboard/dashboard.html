@@ -118,29 +118,77 @@
 
       </section>
 
-
-      <!-- QUICK INFORMATION -->
+        <!-- QUICK INFORMATION -->
       <section class="summary-grid">
 
         <div class="summary-card">
+
           <span>My Applications</span>
-          <strong>0</strong>
-          <small>No active applications</small>
+
+          @if (isLoadingStats()) {
+
+            <strong>—</strong>
+            <small>Loading applications...</small>
+
+          } @else {
+
+            <strong>{{ activeApplications() }}</strong>
+
+            @if (activeApplications() === 0) {
+
+              <small>No active applications</small>
+
+            } @else if (activeApplications() === 1) {
+
+              <small>1 active application</small>
+
+            } @else {
+
+              <small>
+                {{ activeApplications() }} active applications
+              </small>
+
+            }
+
+          }
+
         </div>
 
+
         <div class="summary-card">
+
           <span>My Loans</span>
-          <strong>0</strong>
-          <small>No active loans</small>
+
+          @if (isLoadingStats()) {
+
+            <strong>—</strong>
+            <small>Loading loans...</small>
+
+          } @else {
+
+            <strong>{{ approvedLoans() }}</strong>
+
+            @if (approvedLoans() === 0) {
+
+              <small>No approved loans</small>
+
+            } @else if (approvedLoans() === 1) {
+
+              <small>1 approved loan</small>
+
+            } @else {
+
+              <small>
+                {{ approvedLoans() }} approved loans
+              </small>
+
+            }
+
+          }
+
         </div>
 
-        <div class="summary-card">
-          <span>Eligible Products</span>
-          <strong>—</strong>
-          <small>Complete eligibility checks</small>
-        </div>
-
-      </section>
+</section>
 
 
       <!-- LOANS -->

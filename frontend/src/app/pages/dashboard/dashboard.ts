@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,7 +8,7 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
 
   profileMenuOpen = false;
 
@@ -16,6 +17,14 @@ export class Dashboard {
   email = this.currentUser?.email || 'customer@example.com';
   fullName = this.currentUser?.fullName || 'Customer';
   customerId = this.currentUser?.id;
+
+  // Real dashboard statistics
+  activeApplications = signal(0);
+  approvedLoans = signal(0);
+
+  isLoadingStats = signal(true);
+  statsError = signal('');
+
 
   loans = [
     {
@@ -62,10 +71,22 @@ export class Dashboard {
     }
   ];
 
-  constructor(private router: Router) {}
+
+  constructor(
+    private router: Router,
+    private apiService: ApiService
+  ) {}
+
+
+  ngOnInit(): void {
+    this.loadDashboardStats();
+  }
+
 
   private getCurrentUser(): any {
-    const savedUser = localStorage.getItem('currentUser');
+
+    const savedUser =
+      localStorage.getItem('currentUser');
 
     if (!savedUser) {
       return null;
@@ -78,33 +99,129 @@ export class Dashboard {
     }
   }
 
-  toggleProfileMenu(): void {
-    this.profileMenuOpen = !this.profileMenuOpen;
+
+  loadDashboardStats(): void {
+
+    if (!this.customerId) {
+
+      this.isLoadingStats.set(false);
+
+      this.statsError.set(
+        'Unable to identify the logged-in customer.'
+      );
+
+      return;
+    }
+
+
+    this.isLoadingStats.set(true);
+    this.statsError.set('');
+
+
+    this.apiService
+      .getCustomerApplications(this.customerId)
+      .subscribe({
+
+        next: (applications: any[]) => {
+
+          const active =
+            applications.filter(application =>
+              application.status === 'PENDING' ||
+              application.status === 'UNDER_REVIEW' ||
+              application.status ===
+                'AWAITING_GUARANTOR_SIGNATURE'
+            );
+
+
+          const approved =
+            applications.filter(application =>
+              application.status === 'APPROVED'
+            );
+
+
+          this.activeApplications.set(
+            active.length
+          );
+
+          this.approvedLoans.set(
+            approved.length
+          );
+
+          this.isLoadingStats.set(false);
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load dashboard statistics:',
+            error
+          );
+
+          this.statsError.set(
+            'Unable to load your application statistics.'
+          );
+
+          this.isLoadingStats.set(false);
+        }
+
+      });
   }
 
+
+  toggleProfileMenu(): void {
+    this.profileMenuOpen =
+      !this.profileMenuOpen;
+  }
+
+
   logout(): void {
-    localStorage.removeItem('currentUser');
+
+    localStorage.removeItem(
+      'currentUser'
+    );
+
     this.router.navigate(['/']);
   }
 
+
   getLoanRoute(loanName: string): string {
+
     const routes: Record<string, string> = {
+
       'Personal Loan': 'personal',
+
       'Student Loan': 'student',
+
       'Vehicle Finance': 'vehicle',
+
       'Home Loan': 'home',
+
       'Revolving Credit': 'revolving',
+
       'Debt Consolidation': 'debt'
     };
+
 
     return routes[loanName] || '';
   }
 
-  checkQualification(loanName: string): void {
-    const loanType = this.getLoanRoute(loanName);
+
+  checkQualification(
+    loanName: string
+  ): void {
+
+    const loanType =
+      this.getLoanRoute(loanName);
+
 
     if (loanType) {
-      this.router.navigate(['/qualify', loanType]);
+
+      this.router.navigate([
+        '/qualify',
+        loanType
+      ]);
+
     }
   }
 }

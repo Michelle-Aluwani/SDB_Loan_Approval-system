@@ -1,50 +1,127 @@
 <div class="profile-page">
 
   <header>
+
     <a routerLink="/dashboard">
       ← Back to Dashboard
     </a>
 
     <h2>My Profile</h2>
+
   </header>
+
 
   <main>
 
     <section class="profile-card">
 
-      <div class="profile-avatar">
-        CU
-      </div>
 
-      <h1>Customer Profile</h1>
+      @if (isLoading()) {
 
-      <p>
-        Your personal and contact information will appear here.
-      </p>
+        <h1>Loading profile...</h1>
 
-      <div class="details">
+        <p>
+          Please wait while we retrieve your information.
+        </p>
 
-        <div>
-          <label>Full name</label>
-          <span>Not provided yet</span>
+      }
+
+
+      @if (errorMessage()) {
+
+        <h1>Unable to load profile</h1>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      }
+
+
+      @if (!isLoading() && profile()) {
+
+        <div class="profile-avatar">
+          {{ getInitials() }}
         </div>
 
-        <div>
-          <label>Email address</label>
-          <span>{{ email }}</span>
+
+        <h1>
+          {{ profile().fullName || 'Customer Profile' }}
+        </h1>
+
+        <p>
+          Your personal and contact information.
+        </p>
+
+
+        <div class="details">
+
+          <div>
+
+            <label>
+              Full name
+            </label>
+
+            <span>
+              {{
+                profile().fullName ||
+                'Not provided yet'
+              }}
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Email address
+            </label>
+
+            <span>
+              {{
+                profile().email ||
+                'Not provided yet'
+              }}
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Phone number
+            </label>
+
+            <span>
+              {{
+                profile().phoneNumber ||
+                'Not provided yet'
+              }}
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Residential address
+            </label>
+
+            <span>
+              {{
+                profile().residentialAddress ||
+                'Not provided yet'
+              }}
+            </span>
+
+          </div>
+
         </div>
 
-        <div>
-          <label>Phone number</label>
-          <span>Not provided yet</span>
-        </div>
-
-        <div>
-          <label>Residential address</label>
-          <span>Not provided yet</span>
-        </div>
-
-      </div>
+      }
 
     </section>
 
