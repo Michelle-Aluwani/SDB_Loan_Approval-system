@@ -1,11 +1,9 @@
 <div class="dashboard-layout">
 
   <!-- SIDEBAR -->
-
   <aside class="sidebar">
 
     <div class="sidebar-brand">
-
       <div class="brand-icon">
         LA
       </div>
@@ -14,9 +12,7 @@
         <strong>Loan Approval</strong>
         <span>Customer Portal</span>
       </div>
-
     </div>
-
 
     <nav class="side-menu">
 
@@ -24,13 +20,11 @@
         Dashboard
       </a>
 
-      <a
-        routerLink="/applications"
-        class="active">
+      <a routerLink="/applications" class="active">
         My Applications
       </a>
 
-      <a href="#">
+      <a routerLink="/apply">
         Apply for a Loan
       </a>
 
@@ -40,28 +34,21 @@
 
 
   <!-- MAIN -->
-
   <div class="main-area">
 
-
     <!-- TOP BAR -->
-
     <header class="topbar">
 
       <div>
         <h2>My Applications</h2>
       </div>
 
-
       <div class="profile-wrapper">
 
-        <button
-          class="profile-button"
-          type="button"
-          (click)="toggleProfileMenu()">
+        <button class="profile-button" type="button" (click)="toggleProfileMenu()">
 
           <span class="profile-initials">
-            CU
+            {{ fullName.charAt(0).toUpperCase() }}
           </span>
 
           <span class="profile-arrow">
@@ -70,35 +57,24 @@
 
         </button>
 
-
         @if (profileMenuOpen) {
 
-          <div class="profile-menu">
+        <div class="profile-menu">
 
-            <div class="profile-summary">
-
-              <strong>Customer</strong>
-
-              <span>
-                {{ email }}
-              </span>
-
-            </div>
-
-
-            <a routerLink="/profile">
-              My Profile
-            </a>
-
-
-            <button
-              type="button"
-              class="logout-button"
-              (click)="logout()">
-              Logout
-            </button>
-
+          <div class="profile-summary">
+            <strong>{{ fullName }}</strong>
+            <span>{{ email }}</span>
           </div>
+
+          <a routerLink="/profile">
+            My Profile
+          </a>
+
+          <button type="button" class="logout-button" (click)="logout()">
+            Logout
+          </button>
+
+        </div>
 
         }
 
@@ -108,16 +84,12 @@
 
 
     <!-- CONTENT -->
-
     <main class="applications-content">
 
-
       <!-- INTRODUCTION -->
-
       <section class="page-heading">
 
         <div>
-
           <p class="eyebrow">
             Applications
           </p>
@@ -128,30 +100,69 @@
 
           <p>
             Follow your current applications and view
-            previously completed loans.
+            previously completed applications.
           </p>
-
         </div>
 
-
-      <a
-        routerLink="/apply"
-        class="apply-button">
-        + Apply for a Loan
-      </a>
+        <a routerLink="/apply" class="apply-button">
+          + Apply for a Loan
+        </a>
 
       </section>
 
 
+      <!-- LOADING -->
+      @if (isLoading()) {
+
+      <section class="application-section">
+
+        <div class="section-title">
+          <div>
+            <h2>Loading applications...</h2>
+
+            <p>
+              Please wait while we retrieve your applications.
+            </p>
+          </div>
+        </div>
+
+      </section>
+
+      }
+
+
+      <!-- ERROR -->
+      @if (errorMessage()) {
+
+      <section class="application-section">
+
+        <div class="section-title">
+          <div>
+
+            <h2>
+              Unable to load applications
+            </h2>
+
+            <p>
+              {{ errorMessage() }}
+            </p>
+
+          </div>
+        </div>
+
+      </section>
+
+      }
+
+
+      @if (!isLoading()) {
 
       <!-- ACTIVE -->
-
       <section class="application-section">
 
         <div class="section-title">
 
           <div>
-
             <h2>
               Current applications
             </h2>
@@ -159,11 +170,10 @@
             <p>
               Applications that are currently being processed.
             </p>
-
           </div>
 
           <span class="application-count">
-            {{ activeApplications.length }}
+            {{ activeApplications().length }}
           </span>
 
         </div>
@@ -171,160 +181,153 @@
 
         <div class="application-list">
 
+          @if (activeApplications().length === 0) {
+
+          <div class="empty-state">
+
+            <h3>
+              No current applications
+            </h3>
+
+            <p>
+              You do not currently have any active loan applications.
+            </p>
+
+            <a routerLink="/apply" class="apply-button">
+              Apply for a Loan
+            </a>
+
+          </div>
+
+          }
+
+
           @for (
-            application of activeApplications;
-            track application.id
+          application of activeApplications();
+          track application.id
           ) {
 
-            <article
-              class="application-card"
-              [class.clickable]="application.canView"
-              (click)="openApplication(application)">
+          <article class="application-card" [class.clickable]="application.canView"
+            (click)="openApplication(application)">
 
+            <!-- LOAN INFORMATION -->
+            <div class="application-main">
 
-              <!-- LOAN INFORMATION -->
+              <div class="loan-icon">
+                {{ application.loanName.charAt(0) }}
+              </div>
 
-              <div class="application-main">
+              <div>
 
-                <div class="loan-icon">
-                  {{ application.loanName.charAt(0) }}
+                <div class="application-title-row">
+
+                  <h3>
+                    {{ application.loanName }}
+                  </h3>
+
+                  <span class="status" [class.status-review]="
+                          application.status === 'UNDER_REVIEW' ||
+                          application.status === 'PENDING'
+                        " [class.status-guarantor]="
+                          application.status ===
+                          'AWAITING_GUARANTOR_SIGNATURE'
+                        " [class.status-approved]="
+                          application.status === 'APPROVED'
+                        ">
+
+                    {{
+                    getStatusLabel(
+                    application.status
+                    )
+                    }}
+
+                  </span>
+
                 </div>
 
 
-                <div>
-
-                  <div class="application-title-row">
-
-                    <h3>
-                      {{ application.loanName }}
-                    </h3>
+                <p class="application-number">
+                  Application #{{ application.id }}
+                </p>
 
 
-                    <span
-                      class="status"
-                      [class.status-review]="
-                        application.status === 'UNDER_REVIEW'
-                      "
-                      [class.status-guarantor]="
-                        application.status ===
-                        'AWAITING_GUARANTOR_SIGNATURE'
-                      "
-                      [class.status-approved]="
-                        application.status === 'APPROVED'
-                      "
-                      [class.status-cancelled]="
-                        application.status === 'CANCELLED'
-                      ">
+                <div class="application-details">
 
-                      {{
-                        getStatusLabel(
-                          application.status
-                        )
-                      }}
-
+                  <div>
+                    <span>
+                      Requested amount
                     </span>
 
+                    <strong>
+                      {{
+                      formatAmount(
+                      application.amount
+                      )
+                      }}
+                    </strong>
                   </div>
 
 
-                  <p class="application-number">
-                    {{ application.id }}
-                  </p>
+                  <div>
+                    <span>
+                      Submitted
+                    </span>
 
-
-                  <div class="application-details">
-
-                    <div>
-                      <span>Requested amount</span>
-
-                      <strong>
-                        {{
-                          formatAmount(
-                            application.amount
-                          )
-                        }}
-                      </strong>
-                    </div>
-
-
-                    <div>
-                      <span>Submitted</span>
-
-                      <strong>
-                        {{
-                          application.submittedDate
-                        }}
-                      </strong>
-                    </div>
-
-
-                    @if (application.approvedDate) {
-
-                      <div>
-
-                        <span>Approved</span>
-
-                        <strong>
-                          {{
-                            application.approvedDate
-                          }}
-                        </strong>
-
-                      </div>
-
-                    }
-
+                    <strong>
+                      {{ application.submittedDate }}
+                    </strong>
                   </div>
+
+
+                  @if (application.approvedDate) {
+
+                  <div>
+                    <span>
+                      Approved
+                    </span>
+
+                    <strong>
+                      {{ application.approvedDate }}
+                    </strong>
+                  </div>
+
+                  }
 
                 </div>
 
               </div>
 
-
-              <!-- ACTIONS -->
-
-              <div class="application-actions">
-
-                @if (application.canCancel) {
-
-                  <button
-                    type="button"
-                    class="cancel-button"
-                    (click)="
-                      cancelApplication(
-                        application,
-                        $event
-                      )
-                    ">
-                    Cancel Application
-                  </button>
-
-                }
+            </div>
 
 
-                @if (application.canView) {
+            <!-- ACTIONS -->
+            <div class="application-actions">
 
-                  <span class="view-link">
-                    View details →
-                  </span>
+              @if (application.canCancel) {
 
-                }
+              <button type="button" class="cancel-button" (click)="
+                        cancelApplication(
+                          application,
+                          $event
+                        )
+                      ">
+                Cancel Application
+              </button>
+
+              }
 
 
-                @if (
-                  !application.canView &&
-                  !application.canCancel
-                ) {
+              @if (application.canView) {
 
-                  <span class="locked-message">
-                    No actions available
-                  </span>
+              <span class="view-link">
+                View details →
+              </span>
 
-                }
+              }
 
-              </div>
+            </div>
 
-            </article>
+          </article>
 
           }
 
@@ -333,132 +336,157 @@
       </section>
 
 
-
       <!-- HISTORY -->
-
       <section class="application-section history-section">
 
         <div class="section-title">
 
           <div>
-
             <h2>
               Application history
             </h2>
 
             <p>
-              Your completed loan applications.
+              Your previous loan applications.
             </p>
-
           </div>
+
+          <span class="application-count">
+            {{ applicationHistory().length }}
+          </span>
 
         </div>
 
 
         <div class="application-list">
 
+          @if (applicationHistory().length === 0) {
+
+          <div class="empty-state">
+
+            <h3>
+              No application history
+            </h3>
+
+            <p>
+              Your completed, cancelled or rejected
+              applications will appear here.
+            </p>
+
+          </div>
+
+          }
+
+
           @for (
-            application of applicationHistory;
-            track application.id
+          application of applicationHistory();
+          track application.id
           ) {
 
-            <article
-              class="application-card history-card clickable"
-              (click)="openApplication(application)">
+          <article class="application-card history-card clickable" (click)="openApplication(application)">
 
+            <div class="application-main">
 
-              <div class="application-main">
+              <div class="loan-icon history-icon">
+                {{ application.loanName.charAt(0) }}
+              </div>
 
-                <div class="loan-icon history-icon">
-                  {{ application.loanName.charAt(0) }}
+              <div>
+
+                <div class="application-title-row">
+
+                  <h3>
+                    {{ application.loanName }}
+                  </h3>
+
+                  <span class="status" [class.status-finished]="
+                          application.status === 'FINISHED'
+                        " [class.status-cancelled]="
+                          application.status === 'CANCELLED'
+                        ">
+
+                    {{
+                    getStatusLabel(
+                    application.status
+                    )
+                    }}
+
+                  </span>
+
                 </div>
 
 
-                <div>
-
-                  <div class="application-title-row">
-
-                    <h3>
-                      {{ application.loanName }}
-                    </h3>
+                <p class="application-number">
+                  Application #{{ application.id }}
+                </p>
 
 
-                    <span class="status status-finished">
-                      Finished
+                <div class="application-details">
+
+                  <div>
+                    <span>
+                      Requested amount
                     </span>
 
+                    <strong>
+                      {{
+                      formatAmount(
+                      application.amount
+                      )
+                      }}
+                    </strong>
                   </div>
 
 
-                  <p class="application-number">
-                    {{ application.id }}
-                  </p>
+                  <div>
+                    <span>
+                      Submitted
+                    </span>
 
-
-                  <div class="application-details">
-
-                    <div>
-
-                      <span>Original amount</span>
-
-                      <strong>
-                        {{
-                          formatAmount(
-                            application.amount
-                          )
-                        }}
-                      </strong>
-
-                    </div>
-
-
-                    <div>
-
-                      <span>Approved</span>
-
-                      <strong>
-                        {{
-                          application.approvedDate
-                        }}
-                      </strong>
-
-                    </div>
-
-
-                    <div>
-
-                      <span>Finished</span>
-
-                      <strong>
-                        {{
-                          application.finishedDate
-                        }}
-                      </strong>
-
-                    </div>
-
+                    <strong>
+                      {{ application.submittedDate }}
+                    </strong>
                   </div>
+
+
+                  @if (application.approvedDate) {
+
+                  <div>
+                    <span>
+                      Approved
+                    </span>
+
+                    <strong>
+                      {{ application.approvedDate }}
+                    </strong>
+                  </div>
+
+                  }
 
                 </div>
 
               </div>
 
+            </div>
 
-              <div class="application-actions">
 
-                <span class="view-link">
-                  View details →
-                </span>
+            <div class="application-actions">
 
-              </div>
+              <span class="view-link">
+                View details →
+              </span>
 
-            </article>
+            </div>
+
+          </article>
 
           }
 
         </div>
 
       </section>
+
+      }
 
     </main>
 

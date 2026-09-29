@@ -1,8 +1,6 @@
 <div class="admin-layout">
 
-  <!-- ================================= -->
   <!-- SIDEBAR -->
-  <!-- ================================= -->
 
   <aside class="sidebar">
 
@@ -48,9 +46,7 @@
   </aside>
 
 
-  <!-- ================================= -->
   <!-- MAIN -->
-  <!-- ================================= -->
 
   <main class="main-content">
 
@@ -77,7 +73,7 @@
           (click)="toggleAccountMenu()">
 
           <span class="employee-avatar">
-            {{ adminName.charAt(0) }}
+            {{ adminName.charAt(0).toUpperCase() }}
           </span>
 
         </button>
@@ -94,7 +90,7 @@
               </strong>
 
               <span>
-                Loan Administrator
+                {{ adminEmail }}
               </span>
 
             </div>
@@ -118,9 +114,7 @@
     </header>
 
 
-    <!-- ================================= -->
     <!-- PAGE INTRO -->
-    <!-- ================================= -->
 
     <section class="page-intro">
 
@@ -140,9 +134,30 @@
     </section>
 
 
-    <!-- ================================= -->
+    <!-- ERROR -->
+
+    @if (errorMessage()) {
+
+      <section class="applications-section">
+
+        <div class="empty-state">
+
+          <h3>
+            Unable to load applications
+          </h3>
+
+          <p>
+            {{ errorMessage() }}
+          </p>
+
+        </div>
+
+      </section>
+
+    }
+
+
     <!-- SUMMARY -->
-    <!-- ================================= -->
 
     <section class="summary-grid">
 
@@ -187,9 +202,7 @@
     </section>
 
 
-    <!-- ================================= -->
     <!-- HISTORY -->
-    <!-- ================================= -->
 
     <section class="applications-section">
 
@@ -245,7 +258,29 @@
       </div>
 
 
-      @if (filteredApplications.length > 0) {
+      <!-- LOADING -->
+
+      @if (isLoading()) {
+
+        <div class="empty-state">
+
+          <h3>
+            Loading application history...
+          </h3>
+
+          <p>
+            Please wait while your reviewed
+            applications are retrieved.
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- APPLICATION TABLE -->
+
+      @else if (filteredApplications.length > 0) {
 
         <div class="table-container">
 
@@ -280,32 +315,48 @@
                     #{{ application.id }}
                   </td>
 
+
                   <td>
                     {{ application.customer }}
                   </td>
+
 
                   <td>
                     {{ application.loanType }}
                   </td>
 
+
                   <td class="amount">
-                    R{{ application.amount | number }}
+
+                    {{
+                      formatAmount(
+                        application.amount
+                      )
+                    }}
+
                   </td>
+
 
                   <td>
                     {{ application.submittedDate }}
                   </td>
 
+
                   <td>
                     {{ application.reviewedDate }}
                   </td>
+
 
                   <td>
 
                     <span
                       class="status"
-                      [class.approved]="application.status === 'APPROVED'"
-                      [class.rejected]="application.status === 'REJECTED'">
+                      [class.approved]="
+                        application.status === 'APPROVED'
+                      "
+                      [class.rejected]="
+                        application.status === 'REJECTED'
+                      ">
 
                       {{ application.status }}
 
@@ -313,12 +364,17 @@
 
                   </td>
 
+
                   <td>
 
                     <button
                       type="button"
                       class="view-button"
-                      (click)="viewApplication(application.id)">
+                      (click)="
+                        viewApplication(
+                          application.id
+                        )
+                      ">
 
                       View
 
@@ -337,6 +393,9 @@
         </div>
 
       }
+
+
+      <!-- EMPTY -->
 
       @else {
 

@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
 interface LoanApplication {
-  id: string;
+  id: number;
   loanName: string;
   amount: number;
   status: string;
-
   submittedDate: string;
 
   approvedDate?: string;
@@ -14,6 +14,8 @@ interface LoanApplication {
 
   canCancel: boolean;
   canView: boolean;
+
+  rawApplication?: any;
 }
 
 @Component({
@@ -22,89 +24,246 @@ interface LoanApplication {
   templateUrl: './my-applications.html',
   styleUrl: './my-applications.css'
 })
-export class MyApplications {
+export class MyApplications implements OnInit {
 
   profileMenuOpen = false;
 
+  currentUser = this.getCurrentUser();
+
   email =
-    localStorage.getItem('demoUserEmail') ||
+    this.currentUser?.email ||
     'customer@example.com';
 
+  fullName =
+    this.currentUser?.fullName ||
+    'Customer';
 
-  activeApplications: LoanApplication[] = [
+  activeApplications =
+    signal<LoanApplication[]>([]);
 
-    {
-      id: 'APP-1042',
-      loanName: 'Personal Loan',
-      amount: 45000,
-      status: 'UNDER_REVIEW',
-      submittedDate: '26 September 2026',
-      canCancel: true,
-      canView: false
-    },
+  applicationHistory =
+    signal<LoanApplication[]>([]);
 
-    {
-      id: 'APP-1038',
-      loanName: 'Student Loan',
-      amount: 72000,
-      status: 'AWAITING_GUARANTOR_SIGNATURE',
-      submittedDate: '23 September 2026',
-      canCancel: true,
-      canView: false
-    },
+  isLoading = signal(true);
 
-    {
-      id: 'APP-1029',
-      loanName: 'Home Loan',
-      amount: 850000,
-      status: 'APPROVED',
-      submittedDate: '04 August 2026',
-      approvedDate: '18 August 2026',
-      canCancel: false,
-      canView: true
-    }
-
-  ];
+  errorMessage = signal('');
 
 
-  applicationHistory: LoanApplication[] = [
-
-    {
-      id: 'APP-0821',
-      loanName: 'Vehicle Finance',
-      amount: 180000,
-      status: 'FINISHED',
-      submittedDate: '02 February 2023',
-      approvedDate: '14 February 2023',
-      finishedDate: '03 May 2026',
-      canCancel: false,
-      canView: true
-    },
-
-    {
-      id: 'APP-0715',
-      loanName: 'Personal Loan',
-      amount: 25000,
-      status: 'FINISHED',
-      submittedDate: '10 March 2021',
-      approvedDate: '17 March 2021',
-      finishedDate: '20 March 2024',
-      canCancel: false,
-      canView: true
-    }
-
-  ];
+  constructor(
+    private router: Router,
+    private apiService: ApiService
+  ) {}
 
 
-  constructor(private router: Router) {}
-
-
-  toggleProfileMenu(): void {
-    this.profileMenuOpen = !this.profileMenuOpen;
+  ngOnInit(): void {
+    this.loadApplications();
   }
 
 
-  openApplication(application: LoanApplication): void {
+  private getCurrentUser(): any {
+
+    const savedUser =
+      localStorage.getItem('currentUser');
+
+    if (!savedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedUser);
+    } catch {
+      return null;
+    }
+  }
+
+
+  loadApplications(): void {
+
+    if (!this.currentUser?.id) {
+
+      this.isLoading.set(false);
+
+      this.errorMessage.set(
+        'You must be logged in to view your applications.'
+      );
+
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.apiService
+      .getCustomerApplications(
+        this.currentUser.id
+      )
+      .subscribe({
+
+        next: (applications) => {
+
+          const mappedApplications =
+            applications.map(
+              application =>
+                this.mapApplication(application)
+            );
+
+          this.activeApplications.set(
+            mappedApplications.filter(
+              application =>
+                !this.isHistoryStatus(
+                  application.status
+                )
+            )
+          );
+
+          this.applicationHistory.set(
+            mappedApplications.filter(
+              application =>
+                this.isHistoryStatus(
+                  application.status
+                )
+            )
+          );
+
+          this.isLoading.set(false);
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load applications:',
+            error
+          );
+
+          this.isLoading.set(false);
+
+          this.errorMessage.set(
+            'We could not load your applications.'
+          );
+        }
+      });
+  }
+
+
+  private mapApplication(
+    application: any
+  ): LoanApplication {
+
+    return {
+
+      id: application.id,
+
+      loanName:
+        this.getLoanName(application),
+
+      amount:
+        Number(application.requestedAmount),
+
+      status:
+        application.status,
+
+      submittedDate:
+        this.formatDate(
+          application.submittedAt
+        ),
+
+      approvedDate:
+        application.status === 'APPROVED' &&
+        application.reviewedAt
+          ? this.formatDate(
+              application.reviewedAt
+            )
+          : undefined,
+
+      canCancel:
+        this.canCancelStatus(
+          application.status
+        ),
+
+      canView: true,
+
+      rawApplication: application
+    };
+  }
+
+
+  private getLoanName(
+    application: any
+  ): string {
+
+    if (
+      application.institution !== undefined ||
+      application.studyCost !== undefined
+    ) {
+      return 'Student Loan';
+    }
+
+    if (
+      application.vehiclePrice !== undefined ||
+      application.vehicleType !== undefined
+    ) {
+      return 'Vehicle Finance';
+    }
+
+    if (
+      application.propertyPrice !== undefined ||
+      application.propertyAddress !== undefined
+    ) {
+      return 'Home Loan';
+    }
+
+    if (
+      application.totalDebt !== undefined ||
+      application.numberOfDebts !== undefined
+    ) {
+      return 'Debt Consolidation';
+    }
+
+    if (
+      Number(application.requestedAmount) >= 6000 &&
+      Number(application.requestedAmount) <= 300000 &&
+      application.termMonths !== undefined
+    ) {
+      return 'Personal / Revolving Loan';
+    }
+
+    return 'Personal Loan';
+  }
+
+
+  private canCancelStatus(
+    status: string
+  ): boolean {
+
+    return (
+      status === 'PENDING' ||
+      status ===
+        'AWAITING_GUARANTOR_SIGNATURE'
+    );
+  }
+
+
+  private isHistoryStatus(
+    status: string
+  ): boolean {
+
+    return (
+      status === 'REJECTED' ||
+      status === 'CANCELLED' ||
+      status === 'FINISHED'
+    );
+  }
+
+
+  toggleProfileMenu(): void {
+    this.profileMenuOpen =
+      !this.profileMenuOpen;
+  }
+
+
+  openApplication(
+    application: LoanApplication
+  ): void {
 
     if (!application.canView) {
       return;
@@ -114,7 +273,6 @@ export class MyApplications {
       '/applications',
       application.id
     ]);
-
   }
 
 
@@ -123,44 +281,64 @@ export class MyApplications {
     event: Event
   ): void {
 
-    // Stops the application card click event.
     event.stopPropagation();
 
     if (!application.canCancel) {
       return;
     }
 
-    const confirmed = window.confirm(
-      `Are you sure you want to cancel ${application.id}?`
-    );
+    if (!this.currentUser?.id) {
+      return;
+    }
+
+    const confirmed =
+      window.confirm(
+        `Are you sure you want to cancel application #${application.id}?`
+      );
 
     if (!confirmed) {
       return;
     }
 
-    application.status = 'CANCELLED';
-    application.canCancel = false;
+    this.apiService
+      .cancelApplication(
+        application.id,
+        this.currentUser.id
+      )
+      .subscribe({
 
-    /*
-      TEMPORARY FRONTEND BEHAVIOUR
+        next: () => {
+          this.loadApplications();
+        },
 
-      Later this will call Spring Boot and the database
-      will permanently update the application status.
-    */
+        error: (error) => {
 
+          console.error(
+            'Failed to cancel application:',
+            error
+          );
+
+          this.errorMessage.set(
+            'We could not cancel this application.'
+          );
+        }
+      });
   }
 
 
   logout(): void {
 
-    localStorage.removeItem('demoUserEmail');
+    localStorage.removeItem(
+      'currentUser'
+    );
 
     this.router.navigate(['/']);
-
   }
 
 
-  formatAmount(amount: number): string {
+  formatAmount(
+    amount: number
+  ): string {
 
     return new Intl.NumberFormat(
       'en-ZA',
@@ -170,17 +348,41 @@ export class MyApplications {
         maximumFractionDigits: 0
       }
     ).format(amount);
-
   }
 
 
-  getStatusLabel(status: string): string {
+  formatDate(
+    date: string
+  ): string {
+
+    if (!date) {
+      return 'Not available';
+    }
+
+    return new Intl.DateTimeFormat(
+      'en-ZA',
+      {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }
+    ).format(
+      new Date(date)
+    );
+  }
+
+
+  getStatusLabel(
+    status: string
+  ): string {
 
     return status
       .replaceAll('_', ' ')
       .toLowerCase()
-      .replace(/\b\w/g, letter => letter.toUpperCase());
-
+      .replace(
+        /\b\w/g,
+        letter =>
+          letter.toUpperCase()
+      );
   }
-
 }

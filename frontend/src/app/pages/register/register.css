@@ -1,0 +1,126 @@
+.register-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.register-header {
+  height: 72px;
+  padding: 0 6%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #111827;
+}
+
+.back-link {
+  text-decoration: none;
+  color: #4b5563;
+}
+
+.register-content {
+  padding: 48px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 520px;
+  padding: 36px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+h1 {
+  margin: 0 0 10px;
+}
+
+.register-description {
+  margin-bottom: 28px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin: 14px 0 7px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+input,
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  font: inherit;
+  background: white;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+button {
+  margin-top: 24px;
+  padding: 13px 18px;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.error-message {
+  margin: 16px 0 0;
+  font-size: 14px;
+}
+
+.divider {
+  height: 1px;
+  margin: 28px 0 20px;
+  background: #e5e7eb;
+}
+
+.login-text {
+  margin: 0;
+  text-align: center;
+}
+
+.login-text a {
+  font-weight: 700;
+}

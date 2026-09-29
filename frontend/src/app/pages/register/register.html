@@ -1,0 +1,181 @@
+<div class="register-page">
+
+  <header class="register-header">
+
+    <a routerLink="/" class="brand">
+      Loan Approval
+    </a>
+
+    <a routerLink="/login" class="back-link">
+      ← Back to sign in
+    </a>
+
+  </header>
+
+
+  <main class="register-content">
+
+    <div class="register-card">
+
+      <p class="eyebrow">
+        Create your profile
+      </p>
+
+      <h1>Create account</h1>
+
+      <p class="register-description">
+        Create your customer account to apply for
+        and manage your loans.
+      </p>
+
+
+      <form (ngSubmit)="register()">
+
+
+        <label for="fullName">
+          Full name
+        </label>
+
+        <input
+          id="fullName"
+          type="text"
+          name="fullName"
+          [(ngModel)]="fullName"
+          placeholder="Enter your full name"
+          [disabled]="isLoading()"
+          required
+        >
+
+
+        <label for="idNumber">
+          ID number
+        </label>
+
+        <input
+          id="idNumber"
+          type="text"
+          name="idNumber"
+          [(ngModel)]="idNumber"
+          placeholder="Enter your ID number"
+          [disabled]="isLoading()"
+          required
+        >
+
+
+        <label for="email">
+          Email address
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="Enter your email"
+          [disabled]="isLoading()"
+          required
+        >
+
+
+        <label for="phoneNumber">
+          Phone number
+        </label>
+
+        <input
+          id="phoneNumber"
+          type="tel"
+          name="phoneNumber"
+          [(ngModel)]="phoneNumber"
+          placeholder="Enter your phone number"
+          [disabled]="isLoading()"
+          required
+        >
+
+
+        <label for="residentialAddress">
+          Residential address
+        </label>
+
+        <textarea
+          id="residentialAddress"
+          name="residentialAddress"
+          [(ngModel)]="residentialAddress"
+          placeholder="Enter your residential address"
+          rows="3"
+          [disabled]="isLoading()"
+          required>
+        </textarea>
+
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Create a password"
+          [disabled]="isLoading()"
+          required
+        >
+
+
+        <label for="confirmPassword">
+          Confirm password
+        </label>
+
+        <input
+          id="confirmPassword"
+          type="password"
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          placeholder="Enter your password again"
+          [disabled]="isLoading()"
+          required
+        >
+
+
+        @if (errorMessage()) {
+
+          <p class="error-message">
+            {{ errorMessage() }}
+          </p>
+
+        }
+
+
+        <button
+          type="submit"
+          [disabled]="isLoading()">
+
+          @if (isLoading()) {
+            Creating account...
+          } @else {
+            Create account
+          }
+
+        </button>
+
+      </form>
+
+
+      <div class="divider"></div>
+
+
+      <p class="login-text">
+
+        Already have an account?
+
+        <a routerLink="/login">
+          Sign in
+        </a>
+
+      </p>
+
+    </div>
+
+  </main>
+
+</div>

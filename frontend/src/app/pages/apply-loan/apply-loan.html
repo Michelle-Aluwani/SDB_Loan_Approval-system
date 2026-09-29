@@ -65,7 +65,7 @@
           (click)="toggleProfileMenu()">
 
           <span class="profile-initials">
-            CU
+            {{ fullName.charAt(0).toUpperCase() }}
           </span>
 
           <span class="profile-arrow">
@@ -81,7 +81,7 @@
 
             <div class="profile-summary">
 
-              <strong>Customer</strong>
+              <strong>{{ fullName }}</strong>
 
               <span>
                 {{ email }}
@@ -116,7 +116,7 @@
     <main class="application-content">
 
 
-      @if (!submitted) {
+      @if (!submitted()) {
 
 
         <!-- PAGE TITLE -->
@@ -560,7 +560,37 @@
                   placeholder="Enter employer name">
 
               </div>
+                @if (
+                    selectedLoan?.id === 'personal' ||
+                    selectedLoan?.id === 'vehicle' ||
+                    selectedLoan?.id === 'revolving'
+                  ) {
 
+                    <div class="form-group">
+
+                      <label>
+                        Repayment term
+                      </label>
+
+                      <select
+                        [(ngModel)]="financialDetails.termMonths">
+
+                        <option [ngValue]="null">
+                          Select repayment term
+                        </option>
+
+                        <option [ngValue]="12">12 months</option>
+                        <option [ngValue]="24">24 months</option>
+                        <option [ngValue]="36">36 months</option>
+                        <option [ngValue]="48">48 months</option>
+                        <option [ngValue]="60">60 months</option>
+                        <option [ngValue]="72">72 months</option>
+
+                      </select>
+
+                    </div>
+
+                  }
             </div>
 
 
@@ -577,7 +607,30 @@
                   Student loan information
                 </h3>
 
+                <div class="form-group">
 
+                  <label>
+                    Study type
+                  </label>
+
+                  <select
+                    [(ngModel)]="studentDetails.studyType">
+
+                    <option value="">
+                      Select study type
+                    </option>
+
+                    <option value="FULL_TIME">
+                      Full-time
+                    </option>
+
+                    <option value="PART_TIME">
+                      Part-time
+                    </option>
+
+                  </select>
+
+                </div>
                 <div class="form-grid">
 
                   <div class="form-group">
@@ -617,7 +670,7 @@
                     </label>
 
                     <input
-                      type="text"
+                      type="number"
                       [(ngModel)]="
                         studentDetails.studyYear
                       ">
@@ -654,20 +707,36 @@
                       ">
 
                   </div>
+                  <div class="form-group">
 
+                    <label>
+                      Course duration in months
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="studentDetails.courseDurationMonths"
+                      placeholder="e.g. 36">
+
+</div>
 
                   <div class="form-group">
 
                     <label>
                       Guarantor monthly income
                     </label>
+                    <div class="form-group">
 
-                    <input
-                      type="number"
-                      [(ngModel)]="
-                        studentDetails.guarantorIncome
-                      "
-                      placeholder="R">
+                      <label>
+                        Guarantor monthly expenses
+                      </label>
+
+                      <input
+                        type="number"
+                        [(ngModel)]="studentDetails.guarantorExpenses"
+                        placeholder="R">
+
+                    </div>
 
                   </div>
 
@@ -765,20 +834,26 @@
 
                   </div>
 
+                <div class="form-group">
 
-                  <div class="form-group">
+                  <label>
+                    Do you have a valid driver's licence?
+                  </label>
 
-                    <label>
-                      Driver's licence number
-                    </label>
+                  <select
+                    [(ngModel)]="vehicleDetails.hasDriversLicence">
 
-                    <input
-                      type="text"
-                      [(ngModel)]="
-                        vehicleDetails.driversLicence
-                      ">
+                    <option [ngValue]="false">
+                      No
+                    </option>
 
-                  </div>
+                    <option [ngValue]="true">
+                      Yes
+                    </option>
+
+                  </select>
+
+                </div>
 
                 </div>
 
@@ -848,7 +923,43 @@
                     </textarea>
 
                   </div>
+                    <div class="form-group">
 
+                        <label>
+                          Joint application?
+                        </label>
+
+                        <select
+                          [(ngModel)]="homeDetails.jointApplication">
+
+                          <option [ngValue]="false">
+                            No
+                          </option>
+
+                          <option [ngValue]="true">
+                            Yes
+                          </option>
+
+                  </select>
+
+                </div>
+
+                @if (homeDetails.jointApplication) {
+
+                  <div class="form-group">
+
+                    <label>
+                      Co-applicant monthly income
+                    </label>
+
+                    <input
+                      type="number"
+                      [(ngModel)]="homeDetails.coApplicantIncome"
+                      placeholder="R">
+
+                  </div>
+
+                }
                 </div>
 
               </div>
@@ -1496,13 +1607,25 @@
                 (click)="previousStep()">
                 Back
               </button>
+                  @if (submissionError()) {
+                    <p class="error-message">
+                      {{ submissionError() }}
+                    </p>
+                  }
 
-              <button
-                type="button"
-                class="primary-button"
-                (click)="submitApplication()">
-                Submit Application
-              </button>
+                  <button
+                    type="button"
+                    class="primary-button"
+                    [disabled]="isSubmitting()"
+                    (click)="submitApplication()">
+
+                    @if (isSubmitting()) {
+                      Submitting...
+                    } @else {
+                      Submit Application
+                    }
+
+                  </button>
 
             </div>
 
@@ -1518,7 +1641,7 @@
            SUCCESS
            ========================= -->
 
-      @if (submitted) {
+      @if (submitted()) {
 
         <section class="success-card">
 
@@ -1527,7 +1650,7 @@
           </div>
 
           <p class="eyebrow">
-            Application submitted
+            Application submitted()
           </p>
 
           <h1>
@@ -1536,7 +1659,7 @@
 
           <p>
             Your {{ selectedLoan?.name }} application
-            has been submitted and will now appear in
+            has been submitted() and will now appear in
             your applications.
           </p>
 

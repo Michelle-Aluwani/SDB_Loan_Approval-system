@@ -11,6 +11,8 @@ import { LoanQualification } from './pages/loan-qualification/loan-qualification
 import { Dashboard as AdminDashboard } from './pages/admin/dashboard/dashboard';
 import { Applications as AdminApplications } from './pages/admin/applications/applications';
 import { ApplicationReview } from './pages/admin/application-review/application-review';
+import { Register } from './pages/register/register';
+
 export const routes: Routes = [
   {
     path: '',
@@ -58,6 +60,10 @@ export const routes: Routes = [
     path: 'admin/applications/:id',
     component: ApplicationReview
   },
+  {
+  path: 'register',
+  component: Register
+},
   {
     path: '**',
     redirectTo: ''

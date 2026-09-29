@@ -1,9 +1,6 @@
 <div class="admin-layout">
 
-
-  <!-- ========================================= -->
   <!-- SIDEBAR -->
-  <!-- ========================================= -->
 
   <aside class="sidebar">
 
@@ -60,17 +57,12 @@
   </aside>
 
 
-
-  <!-- ========================================= -->
   <!-- MAIN CONTENT -->
-  <!-- ========================================= -->
 
   <main class="main-content">
 
 
-    <!-- ========================================= -->
     <!-- TOP BAR -->
-    <!-- ========================================= -->
 
     <header class="topbar">
 
@@ -87,7 +79,6 @@
       </div>
 
 
-
       <!-- EMPLOYEE ACCOUNT -->
 
       <div class="account-area">
@@ -98,7 +89,7 @@
           (click)="toggleAccountMenu()">
 
           <span class="employee-avatar">
-            {{ adminName.charAt(0) }}
+            {{ adminName.charAt(0).toUpperCase() }}
           </span>
 
         </button>
@@ -115,7 +106,7 @@
               </strong>
 
               <span>
-                Loan Administrator
+                {{ adminEmail }}
               </span>
 
             </div>
@@ -139,10 +130,7 @@
     </header>
 
 
-
-    <!-- ========================================= -->
     <!-- WELCOME -->
-    <!-- ========================================= -->
 
     <section class="welcome-section">
 
@@ -158,10 +146,30 @@
     </section>
 
 
+    <!-- ERROR -->
 
-    <!-- ========================================= -->
+    @if (errorMessage()) {
+
+      <section class="applications-section">
+
+        <div class="empty-state">
+
+          <h3>
+            Unable to load applications
+          </h3>
+
+          <p>
+            {{ errorMessage() }}
+          </p>
+
+        </div>
+
+      </section>
+
+    }
+
+
     <!-- QUEUE SUMMARY -->
-    <!-- ========================================= -->
 
     <section class="queue-summary">
 
@@ -198,10 +206,7 @@
     </section>
 
 
-
-    <!-- ========================================= -->
     <!-- APPLICATIONS READY FOR REVIEW -->
-    <!-- ========================================= -->
 
     <section class="applications-section">
 
@@ -232,8 +237,29 @@
       </div>
 
 
+      <!-- LOADING -->
 
-      @if (dashboardApplications.length > 0) {
+      @if (isLoading()) {
+
+        <div class="empty-state">
+
+          <h3>
+            Loading applications...
+          </h3>
+
+          <p>
+            Please wait while the application
+            queue is retrieved.
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- APPLICATION TABLE -->
+
+      @else if (dashboardApplications.length > 0) {
 
         <div class="table-container">
 
@@ -287,46 +313,40 @@
                 <tr>
 
                   <td class="application-id">
-
                     #{{ application.id }}
-
                   </td>
 
 
                   <td>
-
                     {{ application.customer }}
-
                   </td>
 
 
                   <td>
-
                     {{ application.loanType }}
-
                   </td>
 
 
                   <td class="amount">
 
-                    R{{ application.amount | number }}
+                    {{
+                      formatAmount(
+                        application.amount
+                      )
+                    }}
 
                   </td>
 
 
                   <td>
-
                     {{ application.submittedDate }}
-
                   </td>
 
 
                   <td>
 
                     <span class="status pending">
-
                       Ready for review
-
                     </span>
 
                   </td>
@@ -337,9 +357,11 @@
                     <button
                       type="button"
                       class="review-button"
-                      (click)="reviewApplication(
-                        application.id
-                      )">
+                      (click)="
+                        reviewApplication(
+                          application.id
+                        )
+                      ">
 
                       Review
 
@@ -358,6 +380,9 @@
         </div>
 
       }
+
+
+      <!-- EMPTY QUEUE -->
 
       @else {
 

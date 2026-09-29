@@ -11,7 +11,11 @@ export class Dashboard {
 
   profileMenuOpen = false;
 
-  email = localStorage.getItem('demoUserEmail') || 'customer@example.com';
+  currentUser = this.getCurrentUser();
+
+  email = this.currentUser?.email || 'customer@example.com';
+  fullName = this.currentUser?.fullName || 'Customer';
+  customerId = this.currentUser?.id;
 
   loans = [
     {
@@ -60,42 +64,47 @@ export class Dashboard {
 
   constructor(private router: Router) {}
 
+  private getCurrentUser(): any {
+    const savedUser = localStorage.getItem('currentUser');
+
+    if (!savedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedUser);
+    } catch {
+      return null;
+    }
+  }
+
   toggleProfileMenu(): void {
     this.profileMenuOpen = !this.profileMenuOpen;
   }
 
   logout(): void {
-    localStorage.removeItem('demoUserEmail');
+    localStorage.removeItem('currentUser');
     this.router.navigate(['/']);
   }
 
   getLoanRoute(loanName: string): string {
-  const routes: Record<string, string> = {
-    'Personal Loan': 'personal',
-    'Student Loan': 'student',
-    'Vehicle Finance': 'vehicle',
-    'Home Loan': 'home',
-    'Revolving Credit': 'revolving',
-    'Debt Consolidation': 'debt'
-  };
+    const routes: Record<string, string> = {
+      'Personal Loan': 'personal',
+      'Student Loan': 'student',
+      'Vehicle Finance': 'vehicle',
+      'Home Loan': 'home',
+      'Revolving Credit': 'revolving',
+      'Debt Consolidation': 'debt'
+    };
 
-  return routes[loanName] || '';
-}
-checkQualification(loanName: string): void {
-
-  const routes: Record<string, string> = {
-    'Personal Loan': 'personal',
-    'Student Loan': 'student',
-    'Vehicle Finance': 'vehicle',
-    'Home Loan': 'home',
-    'Revolving Credit': 'revolving',
-    'Debt Consolidation': 'debt'
-  };
-
-  const loanType = routes[loanName];
-
-  if (loanType) {
-    this.router.navigate(['/qualify', loanType]);
+    return routes[loanName] || '';
   }
-}
+
+  checkQualification(loanName: string): void {
+    const loanType = this.getLoanRoute(loanName);
+
+    if (loanType) {
+      this.router.navigate(['/qualify', loanType]);
+    }
+  }
 }

@@ -1,6 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { ApiService } from '../../../services/api.service';
+
+interface AdminApplication {
+  id: number;
+  customer: string;
+  loanType: string;
+  amount: number;
+  submittedDate: string;
+  status: string;
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,162 +23,291 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
 
-  adminName = 'Employee';
+  currentUser = this.getCurrentUser();
+
+  adminName =
+    this.currentUser?.fullName ||
+    'Employee';
+
+  adminEmail =
+    this.currentUser?.email || '';
 
   showAccountMenu = false;
 
+  applications = signal<AdminApplication[]>([]);
 
-  /*
-   * ==========================================
-   * MOCK APPLICATION DATA
-   * ==========================================
-   *
-   * This will later come from Spring Boot.
-   *
-   * Only applications that are successfully
-   * submitted and ready for review should
-   * appear here.
-   *
-   * Applications with the status
-   * AWAITING_GUARANTOR_SIGNATURE should NOT
-   * appear in this queue.
-   */
+  isLoading = signal(true);
 
-  applications = [
-    {
-      id: 1001,
-      customer: 'John Smith',
-      loanType: 'Personal Loan',
-      amount: 50000,
-      submittedDate: '28 Sep 2026',
-      status: 'PENDING'
-    },
-
-    {
-      id: 1002,
-      customer: 'Jane Doe',
-      loanType: 'Student Loan',
-      amount: 25000,
-      submittedDate: '28 Sep 2026',
-      status: 'PENDING'
-    },
-
-    {
-      id: 1003,
-      customer: 'Michael Brown',
-      loanType: 'Vehicle Finance',
-      amount: 180000,
-      submittedDate: '27 Sep 2026',
-      status: 'PENDING'
-    },
-
-    {
-      id: 1004,
-      customer: 'Sarah Williams',
-      loanType: 'Home Loan',
-      amount: 850000,
-      submittedDate: '27 Sep 2026',
-      status: 'PENDING'
-    },
-
-    {
-      id: 1005,
-      customer: 'Thabo Mokoena',
-      loanType: 'Debt Consolidation',
-      amount: 72000,
-      submittedDate: '26 Sep 2026',
-      status: 'PENDING'
-    }
-  ];
+  errorMessage = signal('');
 
 
   constructor(
-    private router: Router
+    private router: Router,
+    private apiService: ApiService
   ) {}
 
 
-  /*
-   * Number of applications currently
-   * waiting to be reviewed.
-   */
+  ngOnInit(): void {
+    this.loadApplications();
+  }
+
+
+  private getCurrentUser(): any {
+
+    const savedUser =
+      localStorage.getItem('currentUser');
+
+    if (!savedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedUser);
+    } catch {
+      return null;
+    }
+  }
+
+
+  loadApplications(): void {
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.apiService
+      .getAvailableApplications()
+      .subscribe({
+
+        next: (applications) => {
+
+          this.applications.set(
+            applications.map(
+              application =>
+                this.mapApplication(application)
+            )
+          );
+
+          this.isLoading.set(false);
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load admin applications:',
+            error
+          );
+
+          this.isLoading.set(false);
+
+          this.errorMessage.set(
+            'We could not load the available applications.'
+          );
+        }
+      });
+  }
+
+
+  private mapApplication(
+    application: any
+  ): AdminApplication {
+
+    return {
+
+      id:
+        application.id,
+
+      customer:
+        application.customer?.fullName ||
+        'Customer',
+
+      loanType:
+        this.getLoanType(application),
+
+      amount:
+        Number(application.requestedAmount),
+
+      submittedDate:
+        this.formatDate(
+          application.submittedAt
+        ),
+
+      status:
+        application.status
+    };
+  }
+
+
+  private getLoanType(
+    application: any
+  ): string {
+
+    if (
+      application.institution !== undefined ||
+      application.studyCost !== undefined
+    ) {
+      return 'Student Loan';
+    }
+
+    if (
+      application.vehiclePrice !== undefined ||
+      application.vehicleType !== undefined
+    ) {
+      return 'Vehicle Finance';
+    }
+
+    if (
+      application.propertyPrice !== undefined ||
+      application.propertyAddress !== undefined
+    ) {
+      return 'Home Loan';
+    }
+
+    if (
+      application.totalDebt !== undefined ||
+      application.numberOfDebts !== undefined
+    ) {
+      return 'Debt Consolidation';
+    }
+
+    return 'Personal / Revolving Loan';
+  }
+
 
   get pendingApplications(): number {
 
-    return this.applications.filter(
+    return this.applications().filter(
       application =>
         application.status === 'PENDING'
     ).length;
-
   }
 
 
-  /*
-   * Applications shown on the dashboard.
-   *
-   * For now this randomises the mock data.
-   *
-   * Later Spring Boot will decide which
-   * applications are available to each
-   * employee.
-   */
+  get dashboardApplications():
+    AdminApplication[] {
 
-  get dashboardApplications() {
+    /*
+      The backend already provides the
+      available application queue.
 
-    return [...this.applications]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 5);
+      We only limit the dashboard preview
+      to five applications.
+    */
 
+    return this.applications().slice(0, 5);
   }
 
-
-  /*
-   * Open application review page.
-   *
-   * Later the backend will claim the
-   * application before allowing the
-   * employee to work on it.
-   */
 
   reviewApplication(
     id: number
   ): void {
 
-    this.router.navigate([
-      '/admin/applications',
-      id
-    ]);
+    if (!this.adminEmail) {
 
+      this.errorMessage.set(
+        'Employee account information is missing.'
+      );
+
+      return;
+    }
+
+    /*
+      Claim the application BEFORE opening
+      the review page.
+
+      This prevents another employee from
+      successfully claiming the same
+      PENDING application.
+    */
+
+    this.apiService
+      .claimApplication(
+        id,
+        this.adminEmail
+      )
+      .subscribe({
+
+        next: () => {
+
+          this.router.navigate([
+            '/admin/applications',
+            id
+          ]);
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to claim application:',
+            error
+          );
+
+          this.errorMessage.set(
+            'This application could not be claimed. It may already be under review.'
+          );
+          
+          /*
+            Refresh the queue in case another
+            employee claimed it first.
+          */
+          this.loadApplications();
+        }
+      });
   }
 
-
-  /*
-   * Employee account dropdown
-   */
 
   toggleAccountMenu(): void {
 
     this.showAccountMenu =
       !this.showAccountMenu;
-
   }
 
-
-  /*
-   * Logout
-   */
 
   logout(): void {
 
     localStorage.removeItem(
-      'demoUserEmail'
+      'currentUser'
     );
 
     this.router.navigate([
       '/login'
     ]);
-
   }
 
+
+  formatAmount(
+    amount: number
+  ): string {
+
+    return new Intl.NumberFormat(
+      'en-ZA',
+      {
+        style: 'currency',
+        currency: 'ZAR',
+        maximumFractionDigits: 0
+      }
+    ).format(amount);
+  }
+
+
+  private formatDate(
+    date: string
+  ): string {
+
+    if (!date) {
+      return 'Not available';
+    }
+
+    return new Intl.DateTimeFormat(
+      'en-ZA',
+      {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }
+    ).format(
+      new Date(date)
+    );
+  }
 }

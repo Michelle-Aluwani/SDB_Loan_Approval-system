@@ -1,8 +1,6 @@
 <div class="admin-layout">
 
-  <!-- ================================= -->
   <!-- SIDEBAR -->
-  <!-- ================================= -->
 
   <aside class="sidebar">
 
@@ -27,6 +25,7 @@
         class="nav-item">
 
         <span class="nav-icon">▦</span>
+
         Dashboard
 
       </a>
@@ -37,6 +36,7 @@
         class="nav-item">
 
         <span class="nav-icon">▤</span>
+
         Loan Applications
 
       </a>
@@ -46,18 +46,19 @@
   </aside>
 
 
-  <!-- ================================= -->
   <!-- MAIN -->
-  <!-- ================================= -->
 
   <main class="main-content">
+
+
+    <!-- TOP BAR -->
 
     <header class="topbar">
 
       <div>
 
         <span class="page-label">
-          APPLICATION #{{ application.id }}
+          APPLICATION #{{ applicationId }}
         </span>
 
         <h1>
@@ -75,7 +76,7 @@
           (click)="toggleAccountMenu()">
 
           <span class="employee-avatar">
-            {{ adminName.charAt(0) }}
+            {{ adminName.charAt(0).toUpperCase() }}
           </span>
 
         </button>
@@ -92,7 +93,7 @@
               </strong>
 
               <span>
-                Loan Administrator
+                {{ adminEmail }}
               </span>
 
             </div>
@@ -119,609 +120,1135 @@
     <div class="review-container">
 
 
-      <!-- ================================= -->
-      <!-- APPLICATION HEADER -->
-      <!-- ================================= -->
+      <!-- LOADING -->
 
-      <section class="application-heading">
+      @if (isLoading()) {
 
-        <div>
+        <section class="detail-card">
+
+          <div class="card-heading">
+
+            <h3>
+              Loading application...
+            </h3>
+
+          </div>
+
+          <p>
+            Please wait while the application
+            information is retrieved.
+          </p>
+
+        </section>
+
+      }
+
+
+      <!-- ERROR -->
+
+      @else if (errorMessage() && !application()) {
+
+        <section class="detail-card">
+
+          <div class="card-heading">
+
+            <h3>
+              Application unavailable
+            </h3>
+
+          </div>
+
+          <p>
+            {{ errorMessage() }}
+          </p>
 
           <a
             routerLink="/admin"
             class="back-link">
 
-            ← Back
+            ← Back to Dashboard
 
           </a>
 
+        </section>
 
-          <h2>
-            {{ application.customer.fullName }}
-          </h2>
+      }
 
 
-          <p>
-            {{ application.loan.type }}
-            · Submitted
-            {{ application.submittedDate }}
-          </p>
+      <!-- APPLICATION -->
 
-        </div>
+      @else if (application()) {
 
 
-        <span
-          class="status"
-          [class.pending]="application.status === 'PENDING'"
-          [class.approved]="application.status === 'APPROVED'"
-          [class.rejected]="application.status === 'REJECTED'">
+        <!-- APPLICATION HEADER -->
 
-          {{ application.status.replace('_', ' ') }}
-
-        </span>
-
-      </section>
-
-
-
-      <!-- ================================= -->
-      <!-- CUSTOMER INFORMATION -->
-      <!-- ================================= -->
-
-      <section class="detail-card">
-
-        <div class="card-heading">
-
-          <h3>
-            Customer Information
-          </h3>
-
-        </div>
-
-
-        <div class="details-grid">
-
-          <div class="detail">
-
-            <span>
-              Full name
-            </span>
-
-            <strong>
-              {{ application.customer.fullName }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              ID number
-            </span>
-
-            <strong>
-              {{ application.customer.idNumber }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Email address
-            </span>
-
-            <strong>
-              {{ application.customer.email }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Phone number
-            </span>
-
-            <strong>
-              {{ application.customer.phoneNumber }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail full">
-
-            <span>
-              Residential address
-            </span>
-
-            <strong>
-              {{ application.customer.residentialAddress }}
-            </strong>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- ================================= -->
-      <!-- LOAN INFORMATION -->
-      <!-- ================================= -->
-
-      <section class="detail-card">
-
-        <div class="card-heading">
-
-          <h3>
-            Loan Information
-          </h3>
-
-        </div>
-
-
-        <div class="details-grid">
-
-          <div class="detail">
-
-            <span>
-              Loan type
-            </span>
-
-            <strong>
-              {{ application.loan.type }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Requested amount
-            </span>
-
-            <strong>
-              R{{ application.loan.requestedAmount | number }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Requested term
-            </span>
-
-            <strong>
-              {{ application.loan.termMonths }} months
-            </strong>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- ================================= -->
-      <!-- FINANCIAL INFORMATION -->
-      <!-- ================================= -->
-
-      <section class="detail-card">
-
-        <div class="card-heading">
-
-          <h3>
-            Financial Information
-          </h3>
-
-        </div>
-
-
-        <div class="details-grid">
-
-          <div class="detail">
-
-            <span>
-              Employment status
-            </span>
-
-            <strong>
-              {{ application.financial.employmentStatus }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Employer
-            </span>
-
-            <strong>
-              {{ application.financial.employerName }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Monthly income
-            </span>
-
-            <strong>
-              R{{ application.financial.monthlyIncome | number }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Monthly expenses
-            </span>
-
-            <strong>
-              R{{ application.financial.monthlyExpenses | number }}
-            </strong>
-
-          </div>
-
-
-          <div class="detail">
-
-            <span>
-              Declared disposable income
-            </span>
-
-            <strong>
-              R{{ application.financial.disposableIncome | number }}
-            </strong>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- ================================= -->
-      <!-- PRE-QUALIFICATION -->
-      <!-- ================================= -->
-
-      <section class="detail-card">
-
-        <div class="card-heading">
-
-          <h3>
-            Pre-Qualification
-          </h3>
-
-        </div>
-
-
-        <div class="qualification-box">
+        <section class="application-heading">
 
           <div>
 
-            <span>
-              Pre-check result
-            </span>
+            <a
+              routerLink="/admin"
+              class="back-link">
 
-            <strong>
-              May qualify
-            </strong>
+              ← Back
 
-          </div>
+            </a>
 
 
-          <div>
+            <h2>
+              {{
+                application().customer?.fullName ||
+                'Customer'
+              }}
+            </h2>
 
-            <span>
-              Requirements version
-            </span>
-
-            <strong>
-              {{ application.qualification.requirementsVersion }}
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        <p class="qualification-note">
-
-          The pre-qualification result is an
-          initial rules-based check and does not
-          represent final approval.
-
-        </p>
-
-      </section>
-
-
-
-      <!-- ================================= -->
-      <!-- DOCUMENTS -->
-      <!-- ================================= -->
-
-      <section class="detail-card">
-
-        <div class="card-heading">
-
-          <div>
-
-            <h3>
-              Uploaded Documents
-            </h3>
 
             <p>
-              Documents can be reviewed inside
-              the employee portal.
+              {{ loanType }}
+              · Submitted
+              {{ formatDate(application().submittedAt) }}
             </p>
 
           </div>
 
-        </div>
+
+          <span
+            class="status"
+            [class.pending]="
+              application().status === 'PENDING' ||
+              application().status === 'UNDER_REVIEW'
+            "
+            [class.approved]="
+              application().status === 'APPROVED'
+            "
+            [class.rejected]="
+              application().status === 'REJECTED'
+            ">
+
+            {{
+              getStatusLabel(
+                application().status
+              )
+            }}
+
+          </span>
+
+        </section>
 
 
-        <div class="documents-list">
+        <!-- ERROR DURING DECISION -->
 
-          @for (
-            document of application.documents;
-            track document.id
-          ) {
+        @if (errorMessage()) {
 
-            <div class="document-row">
+          <section class="detail-card">
 
-              <div class="document-info">
+            <div class="card-heading">
 
-                <div class="document-icon">
-                  PDF
-                </div>
-
-
-                <div>
-
-                  <strong>
-                    {{ document.name }}
-                  </strong>
-
-                  <span>
-                    Uploaded document
-                  </span>
-
-                </div>
-
-              </div>
-
-
-              <button
-                type="button"
-                class="preview-button"
-                (click)="viewDocument(document)">
-
-                View document
-
-              </button>
+              <h3>
+                Unable to complete action
+              </h3>
 
             </div>
 
-          }
+            <p>
+              {{ errorMessage() }}
+            </p>
 
-        </div>
+          </section>
 
-      </section>
+        }
 
 
+        <!-- CUSTOMER INFORMATION -->
 
-      <!-- ================================= -->
-      <!-- PREVIEW -->
-      <!-- ================================= -->
+        <section class="detail-card">
 
-      @if (selectedDocument) {
+          <div class="card-heading">
 
-        <section class="document-preview">
+            <h3>
+              Customer Information
+            </h3>
 
-          <div class="preview-heading">
+          </div>
 
-            <div>
+
+          <div class="details-grid">
+
+            <div class="detail">
 
               <span>
-                DOCUMENT PREVIEW
+                Full name
               </span>
 
+              <strong>
+                {{
+                  application().customer?.fullName ||
+                  'Not provided'
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                ID number
+              </span>
+
+              <strong>
+                {{
+                  application().customer?.idNumber ||
+                  'Not provided'
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Email address
+              </span>
+
+              <strong>
+                {{
+                  application().customer?.email ||
+                  'Not provided'
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Phone number
+              </span>
+
+              <strong>
+                {{
+                  application().customer?.phoneNumber ||
+                  'Not provided'
+                }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail full">
+
+              <span>
+                Residential address
+              </span>
+
+              <strong>
+                {{
+                  application().customer?.residentialAddress ||
+                  'Not provided'
+                }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- LOAN INFORMATION -->
+
+        <section class="detail-card">
+
+          <div class="card-heading">
+
+            <h3>
+              Loan Information
+            </h3>
+
+          </div>
+
+
+          <div class="details-grid">
+
+            <div class="detail">
+
+              <span>
+                Loan type
+              </span>
+
+              <strong>
+                {{ loanType }}
+              </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+              <span>
+                Requested amount
+              </span>
+
+              <strong>
+                {{
+                  formatAmount(
+                    application().requestedAmount
+                  )
+                }}
+              </strong>
+
+            </div>
+
+
+            @if (application().termMonths) {
+
+              <div class="detail">
+
+                <span>
+                  Requested term
+                </span>
+
+                <strong>
+                  {{ application().termMonths }}
+                  months
+                </strong>
+
+              </div>
+
+            }
+
+          </div>
+
+        </section>
+
+
+        <!-- FINANCIAL INFORMATION -->
+
+        @if (
+          application().monthlyIncome !== undefined ||
+          application().monthlyExpenses !== undefined
+        ) {
+
+          <section class="detail-card">
+
+            <div class="card-heading">
+
               <h3>
-                {{ selectedDocument.name }}
+                Financial Information
               </h3>
 
             </div>
 
 
-            <button
-              type="button"
-              class="close-preview"
-              (click)="closeDocument()">
-
-              ×
-
-            </button>
-
-          </div>
+            <div class="details-grid">
 
 
-          <div class="preview-frame">
+              @if (application().employmentStatus) {
 
-            <iframe
-              [src]="selectedDocument.previewUrl"
-              title="Document preview">
-            </iframe>
+                <div class="detail">
 
-          </div>
+                  <span>
+                    Employment status
+                  </span>
 
+                  <strong>
+                    {{ application().employmentStatus }}
+                  </strong>
 
-          <p class="security-note">
+                </div>
 
-            This document is displayed for review
-            inside the employee portal.
-
-          </p>
-
-        </section>
-
-      }
+              }
 
 
+              @if (application().employerName) {
 
-      <!-- ================================= -->
-      <!-- PREVIOUS DECISION -->
-      <!-- ================================= -->
+                <div class="detail">
 
-      @if (!canMakeDecision) {
+                  <span>
+                    Employer
+                  </span>
 
-        <section class="decision-complete">
+                  <strong>
+                    {{ application().employerName }}
+                  </strong>
 
-          <span>
-            DECISION RECORDED
-          </span>
+                </div>
 
-          <h3>
-            {{ application.status }}
-          </h3>
-
-
-          @if (application.reviewedBy) {
-
-            <p>
-              Reviewed by
-              {{ application.reviewedBy }}
-              on
-              {{ application.reviewedDate }}.
-            </p>
-
-          }
-
-        </section>
-
-      }
+              }
 
 
+              @if (
+                application().monthlyIncome !== undefined
+              ) {
 
-      <!-- ================================= -->
-      <!-- DECISION -->
-      <!-- ================================= -->
+                <div class="detail">
 
-      @if (canMakeDecision) {
+                  <span>
+                    Monthly income
+                  </span>
 
-        <section class="decision-section">
+                  <strong>
+                    {{
+                      formatAmount(
+                        application().monthlyIncome
+                      )
+                    }}
+                  </strong>
 
-          <div>
+                </div>
 
-            <h3>
-              Application Decision
-            </h3>
-
-            <p>
-              Review the application information
-              and supporting documents before
-              making a decision.
-            </p>
-
-          </div>
-
-
-          @if (!showRejectBox) {
-
-            <div class="decision-buttons">
-
-              <button
-                type="button"
-                class="reject-button"
-                (click)="openRejectBox()">
-
-                Reject Application
-
-              </button>
+              }
 
 
-              <button
-                type="button"
-                class="approve-button"
-                (click)="approveApplication()">
+              @if (
+                application().monthlyExpenses !== undefined
+              ) {
 
-                Approve Application
+                <div class="detail">
 
-              </button>
+                  <span>
+                    Monthly expenses
+                  </span>
+
+                  <strong>
+                    {{
+                      formatAmount(
+                        application().monthlyExpenses
+                      )
+                    }}
+                  </strong>
+
+                </div>
+
+              }
+
+
+              @if (
+                application().monthlyIncome !== undefined &&
+                application().monthlyExpenses !== undefined
+              ) {
+
+                <div class="detail">
+
+                  <span>
+                    Disposable income
+                  </span>
+
+                  <strong>
+                    {{
+                      formatAmount(
+                        disposableIncome
+                      )
+                    }}
+                  </strong>
+
+                </div>
+
+              }
 
             </div>
 
-          }
+          </section>
+
+        }
 
 
-          @if (showRejectBox) {
+        <!-- STUDENT LOAN DETAILS -->
 
-            <div class="reject-box">
+        @if (loanType === 'Student Loan') {
 
-              <label for="rejectionReason">
+          <section class="detail-card">
 
-                Reason for rejection
+            <div class="card-heading">
 
-              </label>
+              <h3>
+                Student Loan Information
+              </h3>
 
-
-              <textarea
-                id="rejectionReason"
-                rows="4"
-                placeholder="Enter the reason for rejecting this application..."
-                #reasonInput
-                (input)="rejectionReason = reasonInput.value">
-              </textarea>
+            </div>
 
 
-              <div class="reject-actions">
+            <div class="details-grid">
 
-                <button
-                  type="button"
-                  class="cancel-button"
-                  (click)="cancelReject()">
+              <div class="detail">
 
-                  Cancel
+                <span>
+                  Study type
+                </span>
 
-                </button>
+                <strong>
+                  {{
+                    application().studyType ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
 
 
-                <button
-                  type="button"
-                  class="confirm-reject-button"
-                  [disabled]="!rejectionReason.trim()"
-                  (click)="rejectApplication()">
+              <div class="detail">
 
-                  Confirm Rejection
+                <span>
+                  Institution
+                </span>
 
-                </button>
+                <strong>
+                  {{
+                    application().institution ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Course
+                </span>
+
+                <strong>
+                  {{
+                    application().course ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Study year
+                </span>
+
+                <strong>
+                  {{
+                    application().studyYear ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
+
+
+              @if (application().courseDurationMonths) {
+
+                <div class="detail">
+
+                  <span>
+                    Course duration
+                  </span>
+
+                  <strong>
+                    {{ application().courseDurationMonths }}
+                    months
+                  </strong>
+
+                </div>
+
+              }
+
+
+              @if (application().studyCost !== undefined) {
+
+                <div class="detail">
+
+                  <span>
+                    Study cost
+                  </span>
+
+                  <strong>
+                    {{
+                      formatAmount(
+                        application().studyCost
+                      )
+                    }}
+                  </strong>
+
+                </div>
+
+              }
+
+            </div>
+
+          </section>
+
+
+          <!-- GUARANTOR -->
+
+          <section class="detail-card">
+
+            <div class="card-heading">
+
+              <h3>
+                Guarantor Information
+              </h3>
+
+            </div>
+
+
+            <div class="details-grid">
+
+              <div class="detail">
+
+                <span>
+                  Guarantor name
+                </span>
+
+                <strong>
+                  {{
+                    application().guarantorName ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
+
+
+              @if (
+                application().guarantorIncome !== undefined
+              ) {
+
+                <div class="detail">
+
+                  <span>
+                    Guarantor income
+                  </span>
+
+                  <strong>
+                    {{
+                      formatAmount(
+                        application().guarantorIncome
+                      )
+                    }}
+                  </strong>
+
+                </div>
+
+              }
+
+
+              @if (
+                application().guarantorExpenses !== undefined
+              ) {
+
+                <div class="detail">
+
+                  <span>
+                    Guarantor expenses
+                  </span>
+
+                  <strong>
+                    {{
+                      formatAmount(
+                        application().guarantorExpenses
+                      )
+                    }}
+                  </strong>
+
+                </div>
+
+              }
+
+            </div>
+
+          </section>
+
+        }
+
+
+        <!-- VEHICLE DETAILS -->
+
+        @if (loanType === 'Vehicle Finance') {
+
+          <section class="detail-card">
+
+            <div class="card-heading">
+
+              <h3>
+                Vehicle Information
+              </h3>
+
+            </div>
+
+
+            <div class="details-grid">
+
+              <div class="detail">
+
+                <span>
+                  Vehicle price
+                </span>
+
+                <strong>
+                  {{
+                    formatAmount(
+                      application().vehiclePrice
+                    )
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Vehicle type
+                </span>
+
+                <strong>
+                  {{
+                    application().vehicleType ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Seller type
+                </span>
+
+                <strong>
+                  {{
+                    application().sellerType ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Valid driver's licence
+                </span>
+
+                <strong>
+                  {{
+                    application().hasDriversLicence
+                      ? 'Yes'
+                      : 'No'
+                  }}
+                </strong>
 
               </div>
 
             </div>
 
-          }
+          </section>
 
-        </section>
+        }
+
+
+        <!-- HOME LOAN DETAILS -->
+
+        @if (loanType === 'Home Loan') {
+
+          <section class="detail-card">
+
+            <div class="card-heading">
+
+              <h3>
+                Property Information
+              </h3>
+
+            </div>
+
+
+            <div class="details-grid">
+
+              <div class="detail">
+
+                <span>
+                  Property price
+                </span>
+
+                <strong>
+                  {{
+                    formatAmount(
+                      application().propertyPrice
+                    )
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Deposit amount
+                </span>
+
+                <strong>
+                  {{
+                    formatAmount(
+                      application().depositAmount
+                    )
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail full">
+
+                <span>
+                  Property address
+                </span>
+
+                <strong>
+                  {{
+                    application().propertyAddress ||
+                    'Not provided'
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Joint application
+                </span>
+
+                <strong>
+                  {{
+                    application().jointApplication
+                      ? 'Yes'
+                      : 'No'
+                  }}
+                </strong>
+
+              </div>
+
+
+              @if (
+                application().jointApplication &&
+                application().coApplicantIncome !== undefined
+              ) {
+
+                <div class="detail">
+
+                  <span>
+                    Co-applicant income
+                  </span>
+
+                  <strong>
+                    {{
+                      formatAmount(
+                        application().coApplicantIncome
+                      )
+                    }}
+                  </strong>
+
+                </div>
+
+              }
+
+            </div>
+
+          </section>
+
+        }
+
+
+        <!-- DEBT CONSOLIDATION DETAILS -->
+
+        @if (loanType === 'Debt Consolidation') {
+
+          <section class="detail-card">
+
+            <div class="card-heading">
+
+              <h3>
+                Debt Information
+              </h3>
+
+            </div>
+
+
+            <div class="details-grid">
+
+              <div class="detail">
+
+                <span>
+                  Total debt
+                </span>
+
+                <strong>
+                  {{
+                    formatAmount(
+                      application().totalDebt
+                    )
+                  }}
+                </strong>
+
+              </div>
+
+
+              <div class="detail">
+
+                <span>
+                  Number of debts
+                </span>
+
+                <strong>
+                  {{
+                    application().numberOfDebts
+                  }}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </section>
+
+        }
+
+
+        <!-- REVIEW INFORMATION -->
+
+        @if (application().reviewedBy) {
+
+          <section class="detail-card">
+
+            <div class="card-heading">
+
+              <h3>
+                Review Information
+              </h3>
+
+            </div>
+
+
+            <div class="details-grid">
+
+              <div class="detail">
+
+                <span>
+                  Reviewed by
+                </span>
+
+                <strong>
+                  {{ application().reviewedBy }}
+                </strong>
+
+              </div>
+
+
+              @if (application().reviewedAt) {
+
+                <div class="detail">
+
+                  <span>
+                    Review date
+                  </span>
+
+                  <strong>
+                    {{
+                      formatDate(
+                        application().reviewedAt
+                      )
+                    }}
+                  </strong>
+
+                </div>
+
+              }
+
+            </div>
+
+
+            @if (
+              application().status === 'REJECTED' &&
+              application().rejectionReason
+            ) {
+
+              <div class="qualification-note">
+
+                <strong>
+                  Rejection reason:
+                </strong>
+
+                {{ application().rejectionReason }}
+
+              </div>
+
+            }
+
+          </section>
+
+        }
+
+
+        <!-- PREVIOUS DECISION -->
+
+        @if (!canMakeDecision) {
+
+          <section class="decision-complete">
+
+            <span>
+              APPLICATION STATUS
+            </span>
+
+            <h3>
+              {{
+                getStatusLabel(
+                  application().status
+                )
+              }}
+            </h3>
+
+
+            @if (application().reviewedBy) {
+
+              <p>
+                Reviewed by
+                {{ application().reviewedBy }}
+
+                @if (application().reviewedAt) {
+                  on
+                  {{ formatDate(application().reviewedAt) }}.
+                }
+
+              </p>
+
+            }
+
+          </section>
+
+        }
+
+
+        <!-- DECISION -->
+
+        @if (canMakeDecision) {
+
+          <section class="decision-section">
+
+            <div>
+
+              <h3>
+                Application Decision
+              </h3>
+
+              <p>
+                Review the customer, loan and
+                financial information before
+                making a decision.
+              </p>
+
+            </div>
+
+
+            @if (!showRejectBox) {
+
+              <div class="decision-buttons">
+
+                <button
+                  type="button"
+                  class="reject-button"
+                  [disabled]="isProcessing()"
+                  (click)="openRejectBox()">
+
+                  Reject Application
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="approve-button"
+                  [disabled]="isProcessing()"
+                  (click)="approveApplication()">
+
+                  @if (isProcessing()) {
+                    Processing...
+                  }
+                  @else {
+                    Approve Application
+                  }
+
+                </button>
+
+              </div>
+
+            }
+
+
+            @if (showRejectBox) {
+
+              <div class="reject-box">
+
+                <label for="rejectionReason">
+                  Reason for rejection
+                </label>
+
+
+                <textarea
+                  id="rejectionReason"
+                  rows="4"
+                  placeholder="Enter the reason for rejecting this application..."
+                  [(ngModel)]="rejectionReason"
+                  [disabled]="isProcessing()">
+                </textarea>
+
+
+                <div class="reject-actions">
+
+                  <button
+                    type="button"
+                    class="cancel-button"
+                    [disabled]="isProcessing()"
+                    (click)="cancelReject()">
+
+                    Cancel
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    class="confirm-reject-button"
+                    [disabled]="
+                      !rejectionReason.trim() ||
+                      isProcessing()
+                    "
+                    (click)="rejectApplication()">
+
+                    @if (isProcessing()) {
+                      Processing...
+                    }
+                    @else {
+                      Confirm Rejection
+                    }
+
+                  </button>
+
+                </div>
+
+              </div>
+
+            }
+
+          </section>
+
+        }
 
       }
 

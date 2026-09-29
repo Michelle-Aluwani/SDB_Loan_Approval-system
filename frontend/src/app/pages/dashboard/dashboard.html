@@ -12,23 +12,23 @@
       </div>
     </div>
 
-<nav class="side-menu">
+    <nav class="side-menu">
 
-  <a
-    class="active"
-    routerLink="/dashboard">
-    Dashboard
-  </a>
+      <a
+        class="active"
+        routerLink="/dashboard">
+        Dashboard
+      </a>
 
-  <a routerLink="/applications">
-    My Applications
-  </a>
+      <a routerLink="/applications">
+        My Applications
+      </a>
 
-<a routerLink="/apply" class="apply-button">
-  Apply for a Loan
-</a>
+      <a routerLink="/apply" class="apply-button">
+        Apply for a Loan
+      </a>
 
-</nav>
+    </nav>
 
   </aside>
 
@@ -51,7 +51,7 @@
           (click)="toggleProfileMenu()">
 
           <span class="profile-initials">
-            CU
+            {{ fullName.charAt(0).toUpperCase() }}
           </span>
 
           <span class="profile-arrow">
@@ -66,7 +66,7 @@
           <div class="profile-menu">
 
             <div class="profile-summary">
-              <strong>Customer</strong>
+              <strong>{{ fullName }}</strong>
               <span>{{ email }}</span>
             </div>
 
@@ -93,30 +93,30 @@
     <!-- DASHBOARD CONTENT -->
     <main class="dashboard-content">
 
-    <section class="welcome-section">
+      <section class="welcome-section">
 
-      <div class="welcome-text">
+        <div class="welcome-text">
 
-        <p class="eyebrow">
-          Welcome back
-        </p>
+          <p class="eyebrow">
+            Welcome back, {{ fullName }}
+          </p>
 
-        <h1>What can we help you with?</h1>
+          <h1>What can we help you with?</h1>
 
-        <p>
-          Explore our available loan products, check whether you
-          qualify and manage your existing applications.
-        </p>
+          <p>
+            Explore our available loan products, check whether you
+            qualify and manage your existing applications.
+          </p>
 
-      </div>
+        </div>
 
-      <a
-        routerLink="/apply"
-        class="apply-loan-button">
-        + Apply for a Loan
-      </a>
+        <a
+          routerLink="/apply"
+          class="apply-loan-button">
+          + Apply for a Loan
+        </a>
 
-    </section>
+      </section>
 
 
       <!-- QUICK INFORMATION -->
@@ -180,12 +180,12 @@
                 {{ loan.description }}
               </p>
 
-          <button
-            type="button"
-            class="qualify-button"
-            (click)="checkQualification(loan.name)">
-            Do I qualify?
-          </button>
+              <button
+                type="button"
+                class="qualify-button"
+                (click)="checkQualification(loan.name)">
+                Do I qualify?
+              </button>
 
             </article>
 

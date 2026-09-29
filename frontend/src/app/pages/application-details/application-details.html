@@ -21,12 +21,57 @@
 
   <main class="details-content">
 
-    @if (application) {
+
+    <!-- LOADING -->
+
+    @if (isLoading()) {
+
+      <section class="not-found">
+
+        <h1>
+          Loading application...
+        </h1>
+
+        <p>
+          Please wait while we retrieve your application.
+        </p>
+
+      </section>
+
+    }
+
+
+    <!-- ERROR -->
+
+    @else if (errorMessage()) {
+
+      <section class="not-found">
+
+        <h1>
+          Application unavailable
+        </h1>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+        <a routerLink="/applications">
+          Return to My Applications
+        </a>
+
+      </section>
+
+    }
+
+
+    <!-- APPLICATION -->
+
+    @else if (application()) {
 
       <section class="title-section">
 
         <p class="eyebrow">
-          {{ application.id }}
+          Application #{{ application().id }}
         </p>
 
         <div class="title-row">
@@ -34,12 +79,12 @@
           <div>
 
             <h1>
-              {{ application.loanName }}
+              {{ application().loanName }}
             </h1>
 
             <p>
-              View the details and documents associated
-              with this loan.
+              View the current details and status
+              of this loan application.
             </p>
 
           </div>
@@ -48,10 +93,14 @@
           <span
             class="status"
             [class.finished]="
-              application.status === 'FINISHED'
+              application().status === 'FINISHED'
             ">
 
-            {{ application.status }}
+            {{
+              getStatusLabel(
+                application().status
+              )
+            }}
 
           </span>
 
@@ -60,6 +109,7 @@
       </section>
 
 
+      <!-- MAIN LOAN DETAILS -->
 
       <section class="details-card">
 
@@ -77,7 +127,7 @@
             </label>
 
             <strong>
-              {{ application.id }}
+              #{{ application().id }}
             </strong>
 
           </div>
@@ -90,7 +140,7 @@
             </label>
 
             <strong>
-              {{ application.loanName }}
+              {{ application().loanName }}
             </strong>
 
           </div>
@@ -99,13 +149,30 @@
           <div>
 
             <label>
-              Original amount
+              Requested amount
             </label>
 
             <strong>
               {{
                 formatAmount(
-                  application.amount
+                  application().amount
+                )
+              }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <label>
+              Status
+            </label>
+
+            <strong>
+              {{
+                getStatusLabel(
+                  application().status
                 )
               }}
             </strong>
@@ -120,35 +187,22 @@
             </label>
 
             <strong>
-              {{ application.submittedDate }}
+              {{ application().submittedDate }}
             </strong>
 
           </div>
 
 
-          <div>
-
-            <label>
-              Approved
-            </label>
-
-            <strong>
-              {{ application.approvedDate }}
-            </strong>
-
-          </div>
-
-
-          @if (application.finishedDate) {
+          @if (application().reviewedDate) {
 
             <div>
 
               <label>
-                Finished paying
+                Reviewed
               </label>
 
               <strong>
-                {{ application.finishedDate }}
+                {{ application().reviewedDate }}
               </strong>
 
             </div>
@@ -160,39 +214,172 @@
       </section>
 
 
+      <!-- DECISION INFORMATION -->
 
-      <!-- CONTRACT -->
+      @if (
+        application().status === 'APPROVED' ||
+        application().status === 'REJECTED'
+      ) {
 
-      <section class="contract-card">
+        <section class="contract-card">
 
-        <div>
+          <div>
 
-          <p class="eyebrow">
-            Documents
-          </p>
-
-          <h2>
-            Signed loan contract
-          </h2>
-
-          <p>
-            A copy of the signed agreement for this loan
-            is available below.
-          </p>
-
-        </div>
+            <p class="eyebrow">
+              Application decision
+            </p>
 
 
-        <a
-          href="/mock-loan-contract.pdf"
-          download="Loan-Contract.pdf"
-          class="download-button">
-          Download Contract
-        </a>
+            @if (
+              application().status === 'APPROVED'
+            ) {
 
-      </section>
+              <h2>
+                Application approved
+              </h2>
+
+              <p>
+                Your loan application has been
+                approved by the reviewing employee.
+              </p>
+
+            }
+
+
+            @if (
+              application().status === 'REJECTED'
+            ) {
+
+              <h2>
+                Application not approved
+              </h2>
+
+              @if (application().rejectionReason) {
+
+                <p>
+                  <strong>Reason:</strong>
+                  {{ application().rejectionReason }}
+                </p>
+
+              }
+
+              @else {
+
+                <p>
+                  No rejection reason was provided.
+                </p>
+
+              }
+
+            }
+
+          </div>
+
+        </section>
+
+      }
+
+
+      <!-- APPLICATION STILL PROCESSING -->
+
+      @if (
+        application().status === 'PENDING' ||
+        application().status === 'UNDER_REVIEW' ||
+        application().status ===
+          'AWAITING_GUARANTOR_SIGNATURE'
+      ) {
+
+        <section class="contract-card">
+
+          <div>
+
+            <p class="eyebrow">
+              Application progress
+            </p>
+
+            <h2>
+              {{
+                getStatusLabel(
+                  application().status
+                )
+              }}
+            </h2>
+
+            @if (
+              application().status === 'PENDING'
+            ) {
+
+              <p>
+                Your application has been submitted
+                and is waiting to be reviewed.
+              </p>
+
+            }
+
+            @if (
+              application().status === 'UNDER_REVIEW'
+            ) {
+
+              <p>
+                Your application is currently being
+                reviewed by an employee.
+              </p>
+
+            }
+
+            @if (
+              application().status ===
+                'AWAITING_GUARANTOR_SIGNATURE'
+            ) {
+
+              <p>
+                This student loan application is
+                waiting for the guarantor requirement
+                to be completed.
+              </p>
+
+            }
+
+          </div>
+
+        </section>
+
+      }
+
+
+      <!-- CANCELLED -->
+
+      @if (
+        application().status === 'CANCELLED'
+      ) {
+
+        <section class="contract-card">
+
+          <div>
+
+            <p class="eyebrow">
+              Application status
+            </p>
+
+            <h2>
+              Application cancelled
+            </h2>
+
+            <p>
+              This application has been cancelled
+              and is no longer being processed.
+            </p>
+
+          </div>
+
+        </section>
+
+      }
 
     }
+
+
+    <!-- NOT FOUND -->
 
     @else {
 

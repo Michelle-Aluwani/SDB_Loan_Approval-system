@@ -32,6 +32,7 @@
           name="email"
           [(ngModel)]="email"
           placeholder="Enter your email"
+          [disabled]="isLoading()"
           required
         >
 
@@ -43,6 +44,7 @@
           name="password"
           [(ngModel)]="password"
           placeholder="Enter your password"
+          [disabled]="isLoading()"
           required
         >
 
@@ -50,8 +52,21 @@
           Forgot password?
         </a>
 
-        <button type="submit">
-          Sign in
+        @if (errorMessage()) {
+          <p class="error-message">
+            {{ errorMessage() }}
+          </p>
+        }
+
+        <button
+          type="submit"
+          [disabled]="isLoading()"
+        >
+          @if (isLoading()) {
+            Signing in...
+          } @else {
+            Sign in
+          }
         </button>
 
       </form>
@@ -60,7 +75,7 @@
 
       <p class="register-text">
         Don't have an account?
-        <a href="#">Create account</a>
+        <a routerLink="/register">Create account</a>
       </p>
 
     </div>
