@@ -66,12 +66,12 @@
 
     <!-- APPLICATION -->
 
-    @else if (application()) {
+    @else if (application(); as app) {
 
       <section class="title-section">
 
         <p class="eyebrow">
-          Application #{{ application().id }}
+          Application #{{ app.id }}
         </p>
 
         <div class="title-row">
@@ -79,7 +79,7 @@
           <div>
 
             <h1>
-              {{ application().loanName }}
+              {{ app.loanName }}
             </h1>
 
             <p>
@@ -93,12 +93,12 @@
           <span
             class="status"
             [class.finished]="
-              application().status === 'FINISHED'
+              app.status === 'FINISHED'
             ">
 
             {{
               getStatusLabel(
-                application().status
+                app.status
               )
             }}
 
@@ -127,7 +127,7 @@
             </label>
 
             <strong>
-              #{{ application().id }}
+              #{{ app.id }}
             </strong>
 
           </div>
@@ -140,7 +140,7 @@
             </label>
 
             <strong>
-              {{ application().loanName }}
+              {{ app.loanName }}
             </strong>
 
           </div>
@@ -155,7 +155,7 @@
             <strong>
               {{
                 formatAmount(
-                  application().amount
+                  app.amount
                 )
               }}
             </strong>
@@ -172,7 +172,7 @@
             <strong>
               {{
                 getStatusLabel(
-                  application().status
+                  app.status
                 )
               }}
             </strong>
@@ -187,13 +187,13 @@
             </label>
 
             <strong>
-              {{ application().submittedDate }}
+              {{ app.submittedDate }}
             </strong>
 
           </div>
 
 
-          @if (application().reviewedDate) {
+          @if (app.reviewedDate) {
 
             <div>
 
@@ -202,7 +202,7 @@
               </label>
 
               <strong>
-                {{ application().reviewedDate }}
+                {{ app.reviewedDate }}
               </strong>
 
             </div>
@@ -217,8 +217,8 @@
       <!-- DECISION INFORMATION -->
 
       @if (
-        application().status === 'APPROVED' ||
-        application().status === 'REJECTED'
+        app.status === 'APPROVED' ||
+        app.status === 'REJECTED'
       ) {
 
         <section class="contract-card">
@@ -231,7 +231,7 @@
 
 
             @if (
-              application().status === 'APPROVED'
+              app.status === 'APPROVED'
             ) {
 
               <h2>
@@ -247,18 +247,18 @@
 
 
             @if (
-              application().status === 'REJECTED'
+              app.status === 'REJECTED'
             ) {
 
               <h2>
                 Application not approved
               </h2>
 
-              @if (application().rejectionReason) {
+              @if (app.rejectionReason) {
 
                 <p>
                   <strong>Reason:</strong>
-                  {{ application().rejectionReason }}
+                  {{ app.rejectionReason }}
                 </p>
 
               }
@@ -283,9 +283,9 @@
       <!-- APPLICATION STILL PROCESSING -->
 
       @if (
-        application().status === 'PENDING' ||
-        application().status === 'UNDER_REVIEW' ||
-        application().status ===
+        app.status === 'PENDING' ||
+        app.status === 'UNDER_REVIEW' ||
+        app.status ===
           'AWAITING_GUARANTOR_SIGNATURE'
       ) {
 
@@ -300,13 +300,13 @@
             <h2>
               {{
                 getStatusLabel(
-                  application().status
+                  app.status
                 )
               }}
             </h2>
 
             @if (
-              application().status === 'PENDING'
+              app.status === 'PENDING'
             ) {
 
               <p>
@@ -317,7 +317,7 @@
             }
 
             @if (
-              application().status === 'UNDER_REVIEW'
+              app.status === 'UNDER_REVIEW'
             ) {
 
               <p>
@@ -328,7 +328,7 @@
             }
 
             @if (
-              application().status ===
+              app.status ===
                 'AWAITING_GUARANTOR_SIGNATURE'
             ) {
 
@@ -350,7 +350,7 @@
       <!-- CANCELLED -->
 
       @if (
-        application().status === 'CANCELLED'
+        app.status === 'CANCELLED'
       ) {
 
         <section class="contract-card">

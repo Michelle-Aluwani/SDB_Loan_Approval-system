@@ -3,6 +3,7 @@ package com.sdb.backend.controller;
 import com.sdb.backend.dto.AuthResponse;
 import com.sdb.backend.dto.LoginRequest;
 import com.sdb.backend.dto.RegisterRequest;
+import com.sdb.backend.dto.UserProfileResponse;
 
 import com.sdb.backend.model.User;
 import com.sdb.backend.service.UserService;
@@ -98,19 +99,58 @@ public class AuthController {
 
 
     /*
+     * GET USER PROFILE
+     */
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserProfileResponse> getUserProfile(
+            @PathVariable Long userId
+    ) {
+
+        User user =
+                userService.findById(userId);
+
+        UserProfileResponse response =
+                createUserProfileResponse(user);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    /*
      * Convert User entity into a safe
-     * response for the frontend.
+     * authentication response.
      */
     private AuthResponse createAuthResponse(
             User user
     ) {
 
         return new AuthResponse(
-                user.getId(),
-                user.getFullName(),
-                user.getEmail(),
-                user.getRole()
+            user.getId(),
+            user.getFullName(),
+            user.getEmail(),
+            user.getRole()
         );
     }
 
+
+    /*
+     * Convert User entity into a safe
+     * profile response.
+     *
+     * Password is deliberately excluded.
+     */
+    private UserProfileResponse createUserProfileResponse(
+            User user
+    ) {
+
+        return new UserProfileResponse(
+            user.getId(),
+            user.getFullName(),
+            user.getEmail(),
+            user.getIdNumber(),
+            user.getPhoneNumber(),
+            user.getResidentialAddress(),
+            user.getRole()
+        );
+    }
 }

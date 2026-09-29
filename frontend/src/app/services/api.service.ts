@@ -167,4 +167,10 @@ export class ApiService {
       }
     );
   }
+  
+  getUserProfile(userId: number): Observable<any> {
+  return this.http.get(
+    `${this.baseUrl}/api/auth/users/${userId}`
+  );
+}
 }
