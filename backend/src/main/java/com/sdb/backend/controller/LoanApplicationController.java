@@ -14,8 +14,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/applications")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+    "http://localhost:4200","https://loanapprovalsystem.netlify.app"
 
+    
+})
 public class LoanApplicationController {
 
     private final LoanApplicationService loanApplicationService;
