@@ -168,6 +168,65 @@ export class ApiService {
     );
   }
   
+  // ==========================================
+  // SUPPORTING DOCUMENTS
+  // ==========================================
+
+  uploadDocument(
+    applicationId: number,
+    customerId: number,
+    documentType: string,
+    file: File
+  ): Observable<any> {
+
+    const formData = new FormData();
+
+    formData.append('customerId', String(customerId));
+    formData.append('documentType', documentType);
+    formData.append('file', file, file.name);
+
+    return this.http.post(
+      `${this.baseUrl}/api/applications/${applicationId}/documents`,
+      formData
+    );
+  }
+
+
+  getApplicationDocuments(
+    applicationId: number,
+    employeeEmail: string
+  ): Observable<any[]> {
+
+    return this.http.get<any[]>(
+      `${this.baseUrl}/api/admin/applications/${applicationId}/documents`,
+      {
+        params: {
+          employeeEmail: employeeEmail
+        }
+      }
+    );
+  }
+
+
+  // Returns the raw file so it can be shown on screen only.
+  getDocumentBlob(
+    applicationId: number,
+    documentId: number,
+    employeeEmail: string
+  ): Observable<Blob> {
+
+    return this.http.get(
+      `${this.baseUrl}/api/admin/applications/${applicationId}/documents/${documentId}/view`,
+      {
+        params: {
+          employeeEmail: employeeEmail
+        },
+        responseType: 'blob'
+      }
+    );
+  }
+
+
   getUserProfile(userId: number): Observable<any> {
   return this.http.get(
     `${this.baseUrl}/api/auth/users/${userId}`

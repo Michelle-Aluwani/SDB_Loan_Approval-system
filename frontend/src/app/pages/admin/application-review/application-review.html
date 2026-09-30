@@ -1021,6 +1021,86 @@
         }
 
 
+        <!-- SUPPORTING DOCUMENTS (VIEW ONLY) -->
+
+        <section class="detail-card">
+
+          <div class="card-heading">
+
+            <h3>
+              Supporting Documents
+            </h3>
+
+          </div>
+
+          <p class="documents-note">
+            Documents are view-only and cannot be
+            downloaded from this portal.
+          </p>
+
+          @if (isLoadingDocuments()) {
+
+            <p>Loading documents...</p>
+
+          }
+          @else if (documentsError()) {
+
+            <p>{{ documentsError() }}</p>
+
+          }
+          @else if (documents().length === 0) {
+
+            <p>
+              The customer has not uploaded any documents.
+            </p>
+
+          }
+          @else {
+
+            <div class="document-rows">
+
+              @for (doc of documents(); track doc.id) {
+
+                <div class="document-row">
+
+                  <div>
+
+                    <strong>
+                      {{ getDocumentLabel(doc.documentType) }}
+                    </strong>
+
+                    <span>
+                      {{ formatFileSize(doc.sizeBytes) }}
+                      ·
+                      {{
+                        doc.contentType === 'application/pdf'
+                          ? 'PDF'
+                          : 'Image'
+                      }}
+                    </span>
+
+                  </div>
+
+                  <button
+                    type="button"
+                    class="view-document-button"
+                    (click)="openDocument(doc)">
+
+                    View
+
+                  </button>
+
+                </div>
+
+              }
+
+            </div>
+
+          }
+
+        </section>
+
+
         <!-- REVIEW INFORMATION -->
 
         @if (application().reviewedBy) {
@@ -1255,5 +1335,87 @@
     </div>
 
   </main>
+
+  <!-- DOCUMENT VIEWER (VIEW ONLY) -->
+
+  @if (viewerOpen()) {
+
+    <div
+      class="viewer-backdrop"
+      (contextmenu)="blockContextMenu($event)">
+
+      <div class="viewer-panel">
+
+        <div class="viewer-header">
+
+          <strong>
+            {{ viewerTitle() }}
+          </strong>
+
+          <button
+            type="button"
+            class="viewer-close"
+            (click)="closeViewer()">
+
+            Close
+
+          </button>
+
+        </div>
+
+        <div class="viewer-body">
+
+          @if (viewerLoading()) {
+
+            <p class="viewer-message">
+              Loading document...
+            </p>
+
+          }
+          @else if (viewerError()) {
+
+            <p class="viewer-message">
+              {{ viewerError() }}
+            </p>
+
+          }
+          @else if (viewerUrl) {
+
+            @if (viewerIsPdf()) {
+
+              <iframe
+                class="viewer-frame"
+                title="Document"
+                [src]="viewerUrl">
+              </iframe>
+
+            }
+            @else {
+
+              <img
+                class="viewer-image"
+                alt="Document"
+                draggable="false"
+                [src]="viewerUrl">
+
+            }
+
+            <div class="viewer-watermark">
+
+              @for (n of [1,2,3,4,5,6,7,8,9,10,11,12]; track n) {
+                <span>{{ watermarkText }}</span>
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
 
 </div>

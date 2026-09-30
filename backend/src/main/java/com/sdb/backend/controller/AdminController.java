@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = {
     "http://localhost:4200",
-    "https://YOUR-DEPLOYED-FRONTEND-URL.com"
+    "https://loanapprovalsystem.netlify.app/"
 })
 public class AdminController {
 

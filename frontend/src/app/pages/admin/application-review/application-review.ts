@@ -1,4 +1,11 @@
-import { Component, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  signal
+} from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -21,7 +28,7 @@ import { ApiService } from '../../../services/api.service';
   templateUrl: './application-review.html',
   styleUrl: './application-review.css'
 })
-export class ApplicationReview implements OnInit {
+export class ApplicationReview implements OnInit, OnDestroy {
 
   currentUser = this.getCurrentUser();
 
@@ -48,11 +55,28 @@ export class ApplicationReview implements OnInit {
 
   errorMessage = signal('');
 
+  // ---- supporting documents (view-only) ----
+  documents = signal<any[]>([]);
+  documentsError = signal('');
+  isLoadingDocuments = signal(false);
+
+  viewerOpen = signal(false);
+  viewerLoading = signal(false);
+  viewerError = signal('');
+  viewerTitle = signal('');
+  viewerIsPdf = signal(false);
+  viewerUrl: SafeResourceUrl | null = null;
+
+  private viewerObjectUrl: string | null = null;
+
+  watermarkText = '';
+
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private sanitizer: DomSanitizer
   ) {}
 
 
@@ -116,6 +140,8 @@ export class ApplicationReview implements OnInit {
           );
 
           this.isLoading.set(false);
+
+          this.loadDocuments();
         },
 
         error: (error) => {
@@ -132,6 +158,181 @@ export class ApplicationReview implements OnInit {
           );
         }
       });
+  }
+
+
+  // ==========================================
+  // SUPPORTING DOCUMENTS (VIEW ONLY)
+  // ==========================================
+
+  private readonly documentLabels: Record<string, string> = {
+    ID_DOCUMENT: 'Identification document',
+    PAYSLIP: 'Latest payslip',
+    BANK_STATEMENTS: 'Bank statements',
+    PROOF_OF_RESIDENCE: 'Proof of residence',
+    ADDITIONAL_DOCUMENT: 'Additional document'
+  };
+
+  getDocumentLabel(type: string): string {
+    return this.documentLabels[type] || type;
+  }
+
+  formatFileSize(bytes: number): string {
+
+    if (bytes < 1024 * 1024) {
+      return Math.max(1, Math.round(bytes / 1024)) + ' KB';
+    }
+
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+
+  loadDocuments(): void {
+
+    if (!this.adminEmail) {
+      return;
+    }
+
+    this.isLoadingDocuments.set(true);
+    this.documentsError.set('');
+
+    this.apiService
+      .getApplicationDocuments(
+        this.applicationId,
+        this.adminEmail
+      )
+      .subscribe({
+
+        next: (documents) => {
+          this.documents.set(documents);
+          this.isLoadingDocuments.set(false);
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load documents:',
+            error
+          );
+
+          this.isLoadingDocuments.set(false);
+
+          this.documentsError.set(
+            error?.status === 403
+              ? 'Claim this application to view its documents.'
+              : 'The documents could not be loaded.'
+          );
+        }
+      });
+  }
+
+
+  openDocument(document: any): void {
+
+    this.closeViewer();
+
+    this.watermarkText =
+      `${this.adminEmail} · ${new Date().toLocaleString('en-ZA')} · CONFIDENTIAL`;
+
+    this.viewerTitle.set(
+      this.getDocumentLabel(document.documentType)
+    );
+
+    this.viewerIsPdf.set(
+      document.contentType === 'application/pdf'
+    );
+
+    this.viewerError.set('');
+    this.viewerLoading.set(true);
+    this.viewerOpen.set(true);
+
+    this.apiService
+      .getDocumentBlob(
+        this.applicationId,
+        document.id,
+        this.adminEmail
+      )
+      .subscribe({
+
+        next: (blob) => {
+
+          this.viewerObjectUrl =
+            URL.createObjectURL(blob);
+
+          /*
+           * #toolbar=0 hides the PDF viewer's built-in
+           * download / print buttons.
+           */
+          const url =
+            this.viewerIsPdf()
+              ? this.viewerObjectUrl +
+                '#toolbar=0&navpanes=0&statusbar=0'
+              : this.viewerObjectUrl;
+
+          this.viewerUrl =
+            this.sanitizer
+              .bypassSecurityTrustResourceUrl(url);
+
+          this.viewerLoading.set(false);
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to open document:',
+            error
+          );
+
+          this.viewerLoading.set(false);
+
+          this.viewerError.set(
+            'This document could not be opened.'
+          );
+        }
+      });
+  }
+
+
+  closeViewer(): void {
+
+    if (this.viewerObjectUrl) {
+      URL.revokeObjectURL(this.viewerObjectUrl);
+      this.viewerObjectUrl = null;
+    }
+
+    this.viewerUrl = null;
+    this.viewerOpen.set(false);
+  }
+
+
+  // Light deterrents while a document is on screen.
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+
+    if (!this.viewerOpen()) {
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      this.closeViewer();
+      return;
+    }
+
+    const key = event.key.toLowerCase();
+
+    if ((event.ctrlKey || event.metaKey) && (key === 's' || key === 'p')) {
+      event.preventDefault();
+    }
+  }
+
+
+  blockContextMenu(event: Event): void {
+    event.preventDefault();
+  }
+
+
+  ngOnDestroy(): void {
+    this.closeViewer();
   }
 
 

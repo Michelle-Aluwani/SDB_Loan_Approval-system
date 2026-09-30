@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { catchError, forkJoin, of } from 'rxjs';
 
 interface LoanProduct {
   id: string;
@@ -27,6 +28,7 @@ export class ApplyLoan {
   submitted = signal(false);
   isSubmitting = signal(false);
   submissionError = signal('');
+  uploadWarning = signal('');
 
   currentUser = this.getCurrentUser();
 
@@ -273,10 +275,7 @@ export class ApplyLoan {
             application
           );
 
-          this.isSubmitting.set(false);
-          this.submitted.set(true);
-
-          window.scrollTo(0, 0);
+          this.uploadDocuments(application.id);
         },
 
         error: (error) => {
@@ -293,6 +292,75 @@ export class ApplyLoan {
           );
         }
       });
+  }
+
+  /*
+   * Send the chosen supporting documents to the server,
+   * attached to the newly created application.
+   */
+  private uploadDocuments(applicationId: number): void {
+
+    const documentTypes: Record<
+      keyof typeof this.documents,
+      string
+    > = {
+      idDocument: 'ID_DOCUMENT',
+      payslip: 'PAYSLIP',
+      bankStatements: 'BANK_STATEMENTS',
+      proofOfResidence: 'PROOF_OF_RESIDENCE',
+      additionalDocument: 'ADDITIONAL_DOCUMENT'
+    };
+
+    const uploads = (
+      Object.keys(documentTypes) as
+        Array<keyof typeof this.documents>
+    )
+      .filter(key => this.documents[key] !== null)
+      .map(key =>
+        this.apiService
+          .uploadDocument(
+            applicationId,
+            this.currentUser.id,
+            documentTypes[key],
+            this.documents[key] as File
+          )
+          .pipe(
+            catchError(error => {
+              console.error(
+                `Upload failed for ${key}:`,
+                error
+              );
+              return of({ failed: true, key });
+            })
+          )
+      );
+
+    const finish = (results: any[]) => {
+
+      const failed =
+        results.filter(result => result?.failed);
+
+      if (failed.length > 0) {
+        this.uploadWarning.set(
+          'Your application was submitted, but ' +
+          failed.length +
+          ' document(s) could not be uploaded. ' +
+          'Please contact support so they can be added.'
+        );
+      }
+
+      this.isSubmitting.set(false);
+      this.submitted.set(true);
+
+      window.scrollTo(0, 0);
+    };
+
+    if (uploads.length === 0) {
+      finish([]);
+      return;
+    }
+
+    forkJoin(uploads).subscribe(finish);
   }
 
   private buildLoanPayload(): any {

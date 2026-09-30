@@ -816,3 +816,145 @@
   }
 
 }
+
+
+/* =========================
+   SUPPORTING DOCUMENTS
+   ========================= */
+
+.documents-note {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.document-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.document-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.document-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.document-row span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.view-document-button,
+.viewer-close {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.viewer-close {
+  background: #475569;
+}
+
+
+/* =========================
+   VIEW-ONLY DOCUMENT VIEWER
+   ========================= */
+
+.viewer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.75);
+}
+
+.viewer-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(960px, 100%);
+  height: min(90vh, 100%);
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.viewer-body {
+  position: relative;
+  flex: 1;
+  overflow: auto;
+  background: #e2e8f0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.viewer-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.viewer-image {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.viewer-message {
+  padding: 32px;
+  text-align: center;
+}
+
+/* Identifies who was viewing, discouraging screenshots. */
+.viewer-watermark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-content: space-around;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.viewer-watermark span {
+  padding: 40px 12px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.14);
+  transform: rotate(-24deg);
+  white-space: nowrap;
+}
+
+/* Never let the viewer end up on paper / in a PDF print. */
+@media print {
+  .viewer-backdrop {
+    display: none !important;
+  }
+}

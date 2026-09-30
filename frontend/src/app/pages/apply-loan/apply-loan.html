@@ -1343,9 +1343,10 @@
               </strong>
 
               <p>
-                Your uploaded files are only being held
-                temporarily in this frontend demonstration.
-                They are not currently being sent to a server.
+                Your documents are uploaded securely when you
+                submit your application. Only the employee
+                reviewing your application can view them, and
+                they cannot be downloaded from the portal.
               </p>
 
             </div>
@@ -1663,6 +1664,12 @@
             your applications.
           </p>
 
+
+          @if (uploadWarning()) {
+            <p class="error-message">
+              {{ uploadWarning() }}
+            </p>
+          }
 
           <div class="success-reference">
 
